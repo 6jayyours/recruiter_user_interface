@@ -23,4 +23,4 @@ jobs:
       with:
         context: .
         push: true
-        tags: marjunr/recruiter_userinterface:latest
+        tags: marjunr/recruiter-userinterface:latest
