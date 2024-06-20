@@ -27,6 +27,31 @@ export const registerUser = createAsyncThunk(
   }
 );
 
+export const resendOTP = createAsyncThunk(
+  'auth/resendOTP',
+  async (formData, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(`${AUTH_URL}verifyOtp`, formData);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const verifyOTP = createAsyncThunk(
+  'auth/verifyOTP',
+  async (formData, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(`${AUTH_URL}verifyOtp`, formData);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+
 
 const initialState = {
   id: null,

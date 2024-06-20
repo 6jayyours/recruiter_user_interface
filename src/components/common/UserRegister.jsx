@@ -1,10 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from "react";
 import logo from "../../assets/logo.png";
-import { Link } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { registerUser } from '../../redux/slice/authSlice';
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { registerUser } from "../../redux/slice/authSlice";
+import toast from "react-hot-toast";
 
 const UserRegister = () => {
+  const notifySuccess = () => toast.success("User registered Successfully.");
+  const notifyError = (message) =>
+    toast.error(message || "User Registration failed.");
+
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
   const [username, setUsername] = useState("");
@@ -17,8 +22,103 @@ const UserRegister = () => {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
+  const [registerError, setRegisterError] = useState("");
+  const [showOtpForm, setShowOtpForm] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [otpError, setOtpError] = useState("");
+  const [timer, setTimer] = useState(30);
+  const [resetOtp, setResetOtp] = useState(false);
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const inputs = useRef([]);
+
+  useEffect(() => {
+    let interval;
+    if (showOtpForm && timer > 0) {
+      interval = setInterval(() => {
+        setTimer(prevTimer => prevTimer - 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [showOtpForm, timer]);
+
+  useEffect(() => {
+    if (timer === 0) {
+      clearInterval(timer);
+      setResetOtp(true);
+    }
+  }, [timer]);
+
+  const handleKeyUp = (index, e) => {
+    if (e.keyCode === 8 && index > 0 && e.target.value === '') {
+      otpInputRefs.current[index - 1].current.focus();
+    } else if (index < otpInputRefs.current.length - 1 && e.target.value !== '') {
+      otpInputRefs.current[index + 1].current.focus();
+    }
+  };
+
+  const handleOtpChange = (index, value) => {
+    setOtp(prevOtp => {
+      let newOtp = prevOtp.substring(0, index) + value + prevOtp.substring(index + 1);
+      newOtp = newOtp.replace(/\D/g, '');
+      return newOtp.slice(0, 4);
+    });
+  };
+
+  const handleKeyDown = (e, index) => {
+    if (e.keyCode === 39) {
+      e.preventDefault();
+      if (index < otpInputRefs.current.length - 1) {
+        otpInputRefs.current[index + 1].current.focus();
+      }
+    } else if (e.keyCode === 37) {
+      e.preventDefault();
+      if (index > 0) {
+        otpInputRefs.current[index - 1].current.focus();
+      }
+    }
+  };
+
+  const handleOTPVerificationSubmit = (e) => {
+    e.preventDefault();
+    const otpValue = inputs.current.map(input => input.value).join('');
+    const userData = { email, otp };
+    console.log(userData)
+    dispatch(verifyOTP(userData))
+      .then(response => {
+        console.log("response", response)
+        if (response.payload === 'Otp verified Successfully.') {
+          setShowOtpForm(false);
+          setUsername('');
+          setPassword('');
+          navigate('/login')
+        } else if (response.payload === 'Invalid otp' || response.payload === 'Otp has expired.') {
+          setOtpError(response.payload);
+        }
+      })
+      .catch(error => {
+        console.error('OTP verification error:', error);
+      });
+    setOtp('');
+    console.log(otpError)
+  }
+
+  const handleResetotpClick = () => {
+    const userData = { email };
+    dispatch(resendOTP(userData))
+      .then((response) => {
+
+        console.log("OTP resent successfully:", response);
+      })
+      .catch((error) => {
+
+        console.error("Error resending OTP:", error);
+      });
+    setTimer(30);
+    setResetOtp(false);
+    setOtpError("");
+  };
 
   // Function to handle firstname change
   const handleFirstnameChange = (e) => {
@@ -37,8 +137,8 @@ const UserRegister = () => {
     setLastname(e.target.value);
 
     // Validate lastname
-    if (e.target.value.length < 2) {
-      setLastnameError("Last name must be at least 2 characters long");
+    if (e.target.value.length < 4) {
+      setLastnameError("Last name must be at least 4 characters long");
     } else {
       setLastnameError("");
     }
@@ -72,11 +172,14 @@ const UserRegister = () => {
   const handlePasswordChange = (e) => {
     const password = e.target.value;
     setPassword(password);
-  
+
     // Validate password for special character, number, uppercase, and lowercase
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
     if (!passwordRegex.test(password)) {
-      setPasswordError("Password must be at least 6 characters long and include one special character, one number, one uppercase letter, and one lowercase letter");
+      setPasswordError(
+        "Password must be at least 6 characters long and include one special character, one number, one uppercase letter, and one lowercase letter"
+      );
     } else {
       setPasswordError("");
     }
@@ -97,11 +200,50 @@ const UserRegister = () => {
   // Function to handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (firstname < 6) {
+      setFirstnameError("First name must be at least 6 characters long");
+    }
+    if (lastname < 4) {
+      setLastnameError("Last name must be at least 4 characters long");
+    }
+    if (username < 5) {
+      setUsernameError("Username must be at least 5 characters long");
+    }
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      setEmailError("Invalid email address");
+    }
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
+    if (!passwordRegex.test(password)) {
+      setPasswordError(
+        "Password must be at least 6 characters long and include one special character, one number, one uppercase letter, and one lowercase letter"
+      );
+    }
+    if (confirmPassword !== password) {
+      setConfirmPasswordError("Passwords do not match");
+    }
+
     const formData = {
       username,
       password,
+      firstname,
+      lastname,
+      email,
+      role: "USER",
     };
     dispatch(registerUser(formData))
+      .then((response) => {
+        if (response.payload.message === "User registered successfully.") {
+          setShowOtpForm(true);
+        } else {
+          setRegisterError(response.payload.message);
+        }
+      })
+      .catch((error) => {
+        notifyError();
+        console.error("Login failed: ", error);
+      });
   };
 
   return (
@@ -112,14 +254,24 @@ const UserRegister = () => {
             <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-6">
               <div className="relative overflow-hidden bg-white shadow-lg rounded-md p-6">
                 <div className="flex items-center justify-center lg:justify-center">
-                  <img src={logo} alt="Recruiter Logo" className="w-11 mb-4 lg:mr-4 lg:mb-0" />
+                  <img
+                    src={logo}
+                    alt="Recruiter Logo"
+                    className="w-11 mb-4 lg:mr-4 lg:mb-0"
+                  />
                   <h1 className="text-2xl font-bold">Recruiter</h1>
                 </div>
                 <h5 className="my-6 text-2xl font-semibold text-center lg:text-left">
                   User Registration
                 </h5>
+                {!showOtpForm && (
                 <form className="text-left" onSubmit={handleSubmit}>
                   <div className="grid grid-cols-1 gap-4">
+                    {registerError && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {registerError}
+                      </p>
+                    )}
                     <div className="mb-2">
                       <label className="font-semibold">First Name:</label>
                       <input
@@ -129,7 +281,9 @@ const UserRegister = () => {
                         onChange={handleFirstnameChange}
                       />
                       {firstnameError && (
-                        <p className="text-red-500 text-sm mt-1">{firstnameError}</p>
+                        <p className="text-red-500 text-sm mt-1">
+                          {firstnameError}
+                        </p>
                       )}
                     </div>
                     <div className="mb-2">
@@ -141,7 +295,9 @@ const UserRegister = () => {
                         onChange={handleLastnameChange}
                       />
                       {lastnameError && (
-                        <p className="text-red-500 text-sm mt-1">{lastnameError}</p>
+                        <p className="text-red-500 text-sm mt-1">
+                          {lastnameError}
+                        </p>
                       )}
                     </div>
                     <div className="mb-2">
@@ -153,7 +309,9 @@ const UserRegister = () => {
                         onChange={handleUsernameChange}
                       />
                       {usernameError && (
-                        <p className="text-red-500 text-sm mt-1">{usernameError}</p>
+                        <p className="text-red-500 text-sm mt-1">
+                          {usernameError}
+                        </p>
                       )}
                     </div>
                     <div className="mb-2">
@@ -165,7 +323,9 @@ const UserRegister = () => {
                         onChange={handleEmailChange}
                       />
                       {emailError && (
-                        <p className="text-red-500 text-sm mt-1">{emailError}</p>
+                        <p className="text-red-500 text-sm mt-1">
+                          {emailError}
+                        </p>
                       )}
                     </div>
                     <div className="mb-2">
@@ -177,7 +337,9 @@ const UserRegister = () => {
                         onChange={handlePasswordChange}
                       />
                       {passwordError && (
-                        <p className="text-red-500 text-sm mt-1">{passwordError}</p>
+                        <p className="text-red-500 text-sm mt-1">
+                          {passwordError}
+                        </p>
                       )}
                     </div>
                     <div className="mb-2">
@@ -189,7 +351,9 @@ const UserRegister = () => {
                         onChange={handleConfirmPasswordChange}
                       />
                       {confirmPasswordError && (
-                        <p className="text-red-500 text-sm mt-1">{confirmPasswordError}</p>
+                        <p className="text-red-500 text-sm mt-1">
+                          {confirmPasswordError}
+                        </p>
                       )}
                     </div>
                     <div className="mb-2">
@@ -200,13 +364,70 @@ const UserRegister = () => {
                       />
                     </div>
                     <div className="text-center">
-                      <span className="text-gray-600 mr-2">Already have an account?</span>
+                      <span className="text-gray-600 mr-2">
+                        Already have an account?
+                      </span>
                       <Link to={"/login"}>
-                        <span className="text-indigo-700 font-bold cursor-pointer hover:underline">Sign In</span>
+                        <span className="text-indigo-700 font-bold cursor-pointer hover:underline">
+                          Sign In
+                        </span>
                       </Link>
                     </div>
                   </div>
                 </form>
+                )}
+                {showOtpForm && (
+                <form>
+                  <div class="flex items-center justify-center mb-4">
+                    <p>Time remaining: 30 seconds</p>
+                  </div>
+                  <div class="flex space-x-2 items-center justify-center">
+                    <input
+                      type="password"
+                      maxLength="1"
+                      class="w-10 border border-gray-300 rounded-md py-2 px-3 focus:border-blue-500 focus:ring-blue-500"
+                    />
+                    <input
+                      type="password"
+                      maxLength="1"
+                      class="w-10 border border-gray-300 rounded-md py-2 px-3 focus:border-blue-500 focus:ring-blue-500"
+                    />
+                    <input
+                      type="password"
+                      maxLength="1"
+                      class="w-10 border border-gray-300 rounded-md py-2 px-3 focus:border-blue-500 focus:ring-blue-500"
+                    />
+                    <input
+                      type="password"
+                      maxLength="1"
+                      class="w-10 border border-gray-300 rounded-md py-2 px-3 focus:border-blue-500 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div class="flex items-center justify-center mt-4">
+                    <p class="text-red-500 text-xs mt-1">
+                      {otpError}
+                    </p>
+                  </div>
+                  <div class="flex items-center justify-center mt-4">
+                    <button
+                    onClick={handleResetotpClick}
+                    className="bg-white text-indigo-500"
+                      type="button"
+                    >
+                      Resend OTP
+                    </button>
+                  </div>
+                  <div class="flex justify-center items-center mt-4">
+                    <button
+                    onClick={handleOTPVerificationSubmit}
+                      type="submit"
+                      className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-32"
+                    >
+                      Verify OTP
+                    </button>
+                  </div>
+                </form>
+                )}
               </div>
             </div>
           </div>
@@ -214,6 +435,6 @@ const UserRegister = () => {
       </section>
     </>
   );
-}
+};
 
 export default UserRegister;

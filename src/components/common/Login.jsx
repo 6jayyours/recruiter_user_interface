@@ -11,7 +11,6 @@ import toast from "react-hot-toast";
  * Renders a login form and handles user authentication.
  */
 const Login = () => {
-
   // Toast notifications for success and error messages
   const notifySuccess = () => toast.success("Login Successful.");
   const notifyError = (message) => toast.error(message || "Login failed.");
