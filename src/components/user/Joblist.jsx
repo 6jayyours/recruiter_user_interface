@@ -1,8 +1,9 @@
 import React from 'react'
+import JobCard from './JobCard'
 
 const Joblist = () => {
   return (
-    <div>Joblist</div>
+    <div><JobCard/></div>
   )
 }
 

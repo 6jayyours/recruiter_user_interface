@@ -15,6 +15,7 @@ import Recruiterslist from "../components/admin/Recruiterslist.jsx";
 import Applicationlist from "../components/admin/Applicationlist.jsx";
 import AdminProfile from "../components/admin/AdminProfile.jsx";
 import AdminSettings from "../components/admin/AdminSettings.jsx";
+import Candidates from "../pages/hirerpages/Candidates.jsx";
 
 const router = createBrowserRouter([
   { path: "/login", element: <Login /> },
@@ -42,6 +43,15 @@ const router = createBrowserRouter([
       {path: "applications", element: <Applicationlist />},
       {path: "profile", element: <AdminProfile />},
       {path: "settings", element: <AdminSettings />},
+    ],
+  },
+  {
+    path: "/recruiter",
+    element: <App/>,
+    children: [
+      {path: "home", element: <Landing />},
+      {path: "candidates", element: <Candidates/>},
+
     ],
   },
 

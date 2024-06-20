@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { UserLinks, HirerLinks } from "../../constants/NavLinks";
 import { HiMenuAlt1, HiMenuAlt3 } from "react-icons/hi";
 import MobileMenu from "./section/MobileMenu";
-import navLogo from "../../assets/logo.png"
+import navLogo from "../../assets/logo.png";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
   const links = UserLinks;
@@ -47,9 +48,11 @@ const Navbar = () => {
             </div>
 
             <div>
-              <button className="hidden md:block bg-indigo-700 text-white hover:bg-sky-950 duration-300 rounded-lg py-2 px-4">
-                Get Started
-              </button>
+              <Link to={"/login"}>
+                <button className="hidden md:block bg-indigo-700 text-white hover:bg-sky-950 duration-300 rounded-lg py-2 px-4">
+                  Get Started
+                </button>
+              </Link>
             </div>
 
             {/* mobile view */}
@@ -70,10 +73,7 @@ const Navbar = () => {
         </div>
 
         {/* mobile view links */}
-        <MobileMenu 
-        showMenu={showMenu}
-        toggleMenu={toggleMenu}
-        />
+        <MobileMenu showMenu={showMenu} toggleMenu={toggleMenu} />
       </nav>
     </>
   );
