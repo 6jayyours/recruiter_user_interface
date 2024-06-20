@@ -1,1 +1,1 @@
-export const AUTH_URL = "http://localhost:8082/api/v1/auth/"
+export const AUTH_URL = "https://recruiterjobs.online/api/v1/auth/"
