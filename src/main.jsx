@@ -7,6 +7,7 @@ import App from "./App.jsx";
 import { Provider } from "react-redux";
 import store, { persistor } from "./redux/Store.jsx";
 import { PersistGate } from "redux-persist/integration/react";
+import { Toaster } from "react-hot-toast";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -17,5 +18,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         </RouterProvider>
       </PersistGate>
     </Provider>
+    <Toaster position="top-right"/>
   </React.StrictMode>
+  
 );

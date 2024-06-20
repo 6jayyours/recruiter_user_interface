@@ -4,16 +4,33 @@ import logo from "../../assets/logo.png";
 import { Link, useNavigate } from "react-router-dom";
 import { loginUser } from "../../redux/slice/authSlice";
 import { useDispatch } from "react-redux";
+import toast from "react-hot-toast";
 
+/**
+ * Login Component
+ * Renders a login form and handles user authentication.
+ */
 const Login = () => {
+
+  // Toast notifications for success and error messages
+  const notifySuccess = () => toast.success("Login Successful.");
+  const notifyError = (message) => toast.error(message || "Login failed.");
+
+  // State variables for form fields and error messages
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [usernameError, setUsernameError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [loginError, setLoginError] = useState("");
 
+  // Hooks for dispatching actions and navigation
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  /**
+   * Handles username input change and validation.
+   * @param {Object} e - Event object
+   */
   const handleUsernameChange = (e) => {
     setUsername(e.target.value);
     if (e.target.value.length < 5) {
@@ -23,29 +40,53 @@ const Login = () => {
     }
   };
 
+  /**
+   * Handles password input change and validation.
+   * @param {Object} e - Event object
+   */
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
-    if (e.target.value.length < 8) {
-      setPasswordError("Password must be at least 8 characters long");
+    if (e.target.value.length < 6) {
+      setPasswordError("Password must be at least 6 characters long");
     } else {
       setPasswordError("");
     }
   };
 
-  // Function to handle form submission
+  /**
+   * Handles form submission.
+   * Dispatches the login action and handles the response.
+   * @param {Object} e - Event object
+   */
   const handleSubmit = (e) => {
     e.preventDefault();
-    const formData = {
-      username,
-      password,
-    };
-    dispatch(loginUser(formData))
-    .then((response) => {
-      navigate("/");
-    })
-    .catch((error) => {
-      console.error("Login failed: ", error);
-    });
+
+    // Validate before submitting
+    if (username < 5) {
+      setUsernameError("Username must be at least 5 characters long");
+    }
+    if (password < 6) {
+      setPasswordError("Password must be at least 6 characters long");
+    }
+    if (username.length >= 5 && password.length >= 6) {
+      const formData = {
+        username,
+        password,
+      };
+      dispatch(loginUser(formData))
+        .then((response) => {
+          if (response.payload.message === "User logged in successfully") {
+            notifySuccess();
+            navigate("/");
+          } else {
+            setLoginError(response.payload.message);
+          }
+        })
+        .catch((error) => {
+          notifyError();
+          console.error("Login failed: ", error);
+        });
+    }
   };
 
   return (
@@ -68,6 +109,9 @@ const Login = () => {
                 </h5>
                 <form className="text-left" onSubmit={handleSubmit}>
                   <div className="grid grid-cols-1 gap-4">
+                    {loginError && (
+                      <p className="text-red-500 text-sm mt-1">{loginError}</p>
+                    )}
                     <div className="mb-4">
                       <label className="font-semibold">Username:</label>
                       <input
@@ -105,7 +149,10 @@ const Login = () => {
                         <label className="text-gray-600">Remember Me</label>
                       </div>
                       <div>
-                        <Link to="/forgotPassword" className="text-indigo-600 hover:underline">
+                        <Link
+                          to="/forgotPassword"
+                          className="text-indigo-600 hover:underline"
+                        >
                           Forgot Password?
                         </Link>
                       </div>
@@ -124,10 +171,16 @@ const Login = () => {
                         </span>
                       </div>
                       <div className="flex justify-center gap-3">
-                        <Link to="/userRegistration" className="text-indigo-700 font-bold cursor-pointer hover:underline">
+                        <Link
+                          to="/userRegistration"
+                          className="text-indigo-700 font-bold cursor-pointer hover:underline"
+                        >
                           User Sign Up
                         </Link>
-                        <Link to="/hirerRegistration" className="text-indigo-700 font-bold cursor-pointer hover:underline">
+                        <Link
+                          to="/hirerRegistration"
+                          className="text-indigo-700 font-bold cursor-pointer hover:underline"
+                        >
                           Recruiter Sign Up
                         </Link>
                       </div>
