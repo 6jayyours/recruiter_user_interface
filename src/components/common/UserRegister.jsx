@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import logo from "../../assets/logo.png";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { registerUser } from "../../redux/slice/authSlice";
+import { registerUser, resendOTP } from "../../redux/slice/authSlice";
 import toast from "react-hot-toast";
 
 const UserRegister = () => {
@@ -89,9 +89,8 @@ const UserRegister = () => {
       .then(response => {
         console.log("response", response)
         if (response.payload === 'Otp verified Successfully.') {
+          notifySuccess();
           setShowOtpForm(false);
-          setUsername('');
-          setPassword('');
           navigate('/login')
         } else if (response.payload === 'Invalid otp' || response.payload === 'Otp has expired.') {
           setOtpError(response.payload);

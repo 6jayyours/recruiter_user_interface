@@ -31,7 +31,7 @@ export const resendOTP = createAsyncThunk(
   'auth/resendOTP',
   async (formData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${AUTH_URL}verifyOtp`, formData);
+      const response = await axios.post(`${AUTH_URL}resendOTP`, formData);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.message);
