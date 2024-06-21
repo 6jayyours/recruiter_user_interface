@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import logo from "../../assets/logo.png";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { registerUser, resendOTP } from "../../redux/slice/authSlice";
+import { registerUser, resendOTP, verifyOTP } from "../../redux/slice/authSlice";
 import toast from "react-hot-toast";
 
 const UserRegister = () => {
@@ -13,6 +13,7 @@ const UserRegister = () => {
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
   const [username, setUsername] = useState("");
+  const otpInputRefs = useRef([React.createRef(), React.createRef(), React.createRef(), React.createRef()]);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -84,15 +85,15 @@ const UserRegister = () => {
     e.preventDefault();
     const otpValue = inputs.current.map(input => input.value).join('');
     const userData = { email, otp };
-    console.log(userData)
     dispatch(verifyOTP(userData))
       .then(response => {
-        console.log("response", response)
-        if (response.payload === 'Otp verified Successfully.') {
+        console.log(response.payload)
+        if (response.payload === 'OTP verified successfully.') {
           notifySuccess();
           setShowOtpForm(false);
           navigate('/login')
-        } else if (response.payload === 'Invalid otp' || response.payload === 'Otp has expired.') {
+        } else if (response.payload === 'Invalid OTP.' || response.payload === 'OTP has expired.') {
+          console.log(response.payload)
           setOtpError(response.payload);
         }
       })
@@ -100,7 +101,6 @@ const UserRegister = () => {
         console.error('OTP verification error:', error);
       });
     setOtp('');
-    console.log(otpError)
   }
 
   const handleResetotpClick = () => {
@@ -241,7 +241,6 @@ const UserRegister = () => {
       })
       .catch((error) => {
         notifyError();
-        console.error("Login failed: ", error);
       });
   };
 
@@ -376,49 +375,37 @@ const UserRegister = () => {
                 </form>
                 )}
                 {showOtpForm && (
-                <form>
-                  <div class="flex items-center justify-center mb-4">
-                    <p>Time remaining: 30 seconds</p>
+                <form onSubmit={handleOTPVerificationSubmit}>
+                  <div className="flex items-center justify-center mb-4">
+                    <p>Time remaining: {timer} seconds</p>
                   </div>
-                  <div class="flex space-x-2 items-center justify-center">
+                  <div className="flex space-x-2 items-center justify-center">
+                  {Array.from({ length: 4 }).map((_, index) => (
                     <input
-                      type="password"
+                      key={index}
+                      type='password'
                       maxLength="1"
-                      class="w-10 border border-gray-300 rounded-md py-2 px-3 focus:border-blue-500 focus:ring-blue-500"
+                      ref={otpInputRefs.current[index]}
+                      value={otp[index] || ''}
+                      onChange={(e) => handleOtpChange(index, e.target.value)}
+                      onKeyUp={(e) => handleKeyUp(index, e)}
+                      onKeyDown={(e) => handleKeyDown(e, index)}
+                      className='w-10 border border-gray-300 rounded-md py-2 px-3 focus:border-blue-500 focus:ring-blue-500'
                     />
-                    <input
-                      type="password"
-                      maxLength="1"
-                      class="w-10 border border-gray-300 rounded-md py-2 px-3 focus:border-blue-500 focus:ring-blue-500"
-                    />
-                    <input
-                      type="password"
-                      maxLength="1"
-                      class="w-10 border border-gray-300 rounded-md py-2 px-3 focus:border-blue-500 focus:ring-blue-500"
-                    />
-                    <input
-                      type="password"
-                      maxLength="1"
-                      class="w-10 border border-gray-300 rounded-md py-2 px-3 focus:border-blue-500 focus:ring-blue-500"
-                    />
+                  ))}
                   </div>
-                  <div class="flex items-center justify-center mt-4">
-                    <p class="text-red-500 text-xs mt-1">
-                      {otpError}
-                    </p>
+                  <div className="flex items-center justify-center mt-4">
+                  {otpError && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {otpError}
+                        </p>
+                      )}
                   </div>
-                  <div class="flex items-center justify-center mt-4">
+                  <div className="flex items-center justify-center mt-4">
+                  {resetOtp && <button style={{ backgroundColor: 'white', color: 'blue' }} onClick={handleResetotpClick}>Resend OTP</button>}
+                  </div>
+                  <div className="flex justify-center items-center mt-4">
                     <button
-                    onClick={handleResetotpClick}
-                    className="bg-white text-indigo-500"
-                      type="button"
-                    >
-                      Resend OTP
-                    </button>
-                  </div>
-                  <div class="flex justify-center items-center mt-4">
-                    <button
-                    onClick={handleOTPVerificationSubmit}
                       type="submit"
                       className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-32"
                     >
