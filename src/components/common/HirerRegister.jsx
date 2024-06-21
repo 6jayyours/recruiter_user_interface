@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import {
   registerUser,
   resendOTP,
+  verifyDoc,
   verifyOTP,
 } from "../../redux/slice/authSlice";
 import toast from "react-hot-toast";
@@ -160,17 +161,30 @@ const HirerRegister = () => {
 
   const handleDocumentSubmit = (e) => {
     e.preventDefault();
+    const fileInput = e.target.elements.document;
+    const file = fileInput.files[0];
+    console.log(file.size)
     if (!file || file.size === 0) {
       setDocError("upload a file");
       return;
     }
     if (file.size > 10 * 1024 * 1024) {
+      console.log(file.size)
       setDocError("File size exceeds 10MB limit.");
       return;
     }
     const formData = new FormData();
     formData.append('file', file);
     formData.append('email', email);
+    dispatch(verifyDoc(formData))
+      .then(response => {
+        setShowDocUploadForm(false);
+        toast.success("User Registered Successfully.")
+        navigate('/login');
+      })
+      .catch(error => {
+        toast.error("Error in submission");
+      });
   }
 
   return (
@@ -189,7 +203,7 @@ const HirerRegister = () => {
                   <h1 className="text-2xl font-bold">Recruiter</h1>
                 </div>
                 <h5 className="my-6 text-2xl font-semibold text-center lg:text-left">
-                  User Registration
+                  Recruiter Registration
                 </h5>
                 {!showDocUploadForm && (
                   <form className="text-left" onSubmit={handleSubmit}>
@@ -305,12 +319,13 @@ const HirerRegister = () => {
                     </div>
                   </form>
                 )}
-                {setShowDocUploadForm && (
+                {showDocUploadForm && (
                   <form onSubmit={handleDocumentSubmit}>
                     <label className="mb-2 block text-sm font-medium text-gray-700">
                       Upload Document
                     </label>
                     <div className="flex flex-col md:rounded-s-md rounded w-72 mx-auto mb-4">
+                      <p className="text-gray-400x">Max file size is 10MB</p>
                       <input
                         type="file"
                         id="document"
@@ -326,7 +341,7 @@ const HirerRegister = () => {
                     <div className="flex justify-center items-center mt-4">
                       <button
                         type="submit"
-                        className="bg-blue hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-32"
+                        className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded w-32"
                       >
                         Submit
                       </button>
