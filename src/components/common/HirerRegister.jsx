@@ -305,7 +305,7 @@ const HirerRegister = () => {
                     </div>
                   </form>
                 )}
-                {showDocumentForm && (
+                {setShowDocUploadForm && (
                   <form onSubmit={handleDocumentSubmit}>
                     <label className="mb-2 block text-sm font-medium text-gray-700">
                       Upload Document
