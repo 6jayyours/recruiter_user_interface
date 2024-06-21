@@ -2,21 +2,29 @@ import React, { useEffect, useRef, useState } from "react";
 import logo from "../../assets/logo.png";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { registerUser, resendOTP, verifyOTP } from "../../redux/slice/authSlice";
+import {
+  registerUser,
+  resendOTP,
+  verifyOTP,
+} from "../../redux/slice/authSlice";
 import toast from "react-hot-toast";
 
 const UserRegister = () => {
-  const notifySuccess = () => toast.success("User registered Successfully.");
-  const notifyError = (message) =>
-    toast.error(message || "User Registration failed.");
-
+  // State variables for form fields
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
   const [username, setUsername] = useState("");
-  const otpInputRefs = useRef([React.createRef(), React.createRef(), React.createRef(), React.createRef()]);
+  const otpInputRefs = useRef([
+    React.createRef(),
+    React.createRef(),
+    React.createRef(),
+    React.createRef(),
+  ]);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+  // State variables for form validation errors
   const [firstnameError, setFirstnameError] = useState("");
   const [lastnameError, setLastnameError] = useState("");
   const [usernameError, setUsernameError] = useState("");
@@ -24,6 +32,8 @@ const UserRegister = () => {
   const [passwordError, setPasswordError] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
   const [registerError, setRegisterError] = useState("");
+
+  // State variables for OTP form
   const [showOtpForm, setShowOtpForm] = useState(false);
   const [otp, setOtp] = useState("");
   const [otpError, setOtpError] = useState("");
@@ -34,16 +44,18 @@ const UserRegister = () => {
   const navigate = useNavigate();
   const inputs = useRef([]);
 
+  // Timer effect for OTP form
   useEffect(() => {
     let interval;
     if (showOtpForm && timer > 0) {
       interval = setInterval(() => {
-        setTimer(prevTimer => prevTimer - 1);
+        setTimer((prevTimer) => prevTimer - 1);
       }, 1000);
     }
     return () => clearInterval(interval);
   }, [showOtpForm, timer]);
 
+  // Reset OTP state when timer reaches 0
   useEffect(() => {
     if (timer === 0) {
       clearInterval(timer);
@@ -51,22 +63,19 @@ const UserRegister = () => {
     }
   }, [timer]);
 
+  // Handle key up events in OTP inputs
   const handleKeyUp = (index, e) => {
-    if (e.keyCode === 8 && index > 0 && e.target.value === '') {
+    if (e.keyCode === 8 && index > 0 && e.target.value === "") {
       otpInputRefs.current[index - 1].current.focus();
-    } else if (index < otpInputRefs.current.length - 1 && e.target.value !== '') {
+    } else if (
+      index < otpInputRefs.current.length - 1 &&
+      e.target.value !== ""
+    ) {
       otpInputRefs.current[index + 1].current.focus();
     }
   };
 
-  const handleOtpChange = (index, value) => {
-    setOtp(prevOtp => {
-      let newOtp = prevOtp.substring(0, index) + value + prevOtp.substring(index + 1);
-      newOtp = newOtp.replace(/\D/g, '');
-      return newOtp.slice(0, 4);
-    });
-  };
-
+  // Handle key down events in OTP inputs
   const handleKeyDown = (e, index) => {
     if (e.keyCode === 39) {
       e.preventDefault();
@@ -81,38 +90,49 @@ const UserRegister = () => {
     }
   };
 
+  // Handle OTP change events
+  const handleOtpChange = (index, value) => {
+    setOtp((prevOtp) => {
+      let newOtp =
+        prevOtp.substring(0, index) + value + prevOtp.substring(index + 1);
+      newOtp = newOtp.replace(/\D/g, "");
+      return newOtp.slice(0, 4);
+    });
+  };
+
+  // Handle OTP verification form submission
   const handleOTPVerificationSubmit = (e) => {
     e.preventDefault();
-    const otpValue = inputs.current.map(input => input.value).join('');
+    const otpValue = inputs.current.map((input) => input.value).join("");
     const userData = { email, otp };
     dispatch(verifyOTP(userData))
-      .then(response => {
-        console.log(response.payload)
-        if (response.payload === 'OTP verified successfully.') {
-          notifySuccess();
+      .then((response) => {
+        if (response.payload === "OTP verified successfully.") {
+          toast.success("User registered Successfully.");
           setShowOtpForm(false);
-          navigate('/login')
-        } else if (response.payload === 'Invalid OTP.' || response.payload === 'OTP has expired.') {
-          console.log(response.payload)
+          navigate("/login");
+        } else if (
+          response.payload === "Invalid OTP." ||
+          response.payload === "OTP has expired."
+        ) {
           setOtpError(response.payload);
         }
       })
-      .catch(error => {
-        console.error('OTP verification error:', error);
+      .catch((error) => {
+        toast.error("An error occurred during OTP verification.");
       });
-    setOtp('');
-  }
+    setOtp("");
+  };
 
+  // Handle OTP reset click
   const handleResetotpClick = () => {
     const userData = { email };
     dispatch(resendOTP(userData))
       .then((response) => {
-
-        console.log("OTP resent successfully:", response);
+        toast.success("OTP resent successfully.");
       })
       .catch((error) => {
-
-        console.error("Error resending OTP:", error);
+        toast.success("Error resending OTP.");
       });
     setTimer(30);
     setResetOtp(false);
@@ -263,156 +283,165 @@ const UserRegister = () => {
                   User Registration
                 </h5>
                 {!showOtpForm && (
-                <form className="text-left" onSubmit={handleSubmit}>
-                  <div className="grid grid-cols-1 gap-4">
-                    {registerError && (
-                      <p className="text-red-500 text-sm mt-1">
-                        {registerError}
-                      </p>
-                    )}
-                    <div className="mb-2">
-                      <label className="font-semibold">First Name:</label>
-                      <input
-                        className="form-input mt-1 rounded-md w-full border border-gray-300 p-1"
-                        type="text"
-                        value={firstname}
-                        onChange={handleFirstnameChange}
-                      />
-                      {firstnameError && (
+                  <form className="text-left" onSubmit={handleSubmit}>
+                    <div className="grid grid-cols-1 gap-4">
+                      {registerError && (
                         <p className="text-red-500 text-sm mt-1">
-                          {firstnameError}
+                          {registerError}
                         </p>
                       )}
-                    </div>
-                    <div className="mb-2">
-                      <label className="font-semibold">Last Name:</label>
-                      <input
-                        className="form-input mt-1 rounded-md w-full border border-gray-300 p-1"
-                        type="text"
-                        value={lastname}
-                        onChange={handleLastnameChange}
-                      />
-                      {lastnameError && (
-                        <p className="text-red-500 text-sm mt-1">
-                          {lastnameError}
-                        </p>
-                      )}
-                    </div>
-                    <div className="mb-2">
-                      <label className="font-semibold">Username:</label>
-                      <input
-                        className="form-input mt-1 rounded-md w-full border border-gray-300 p-1"
-                        type="text"
-                        value={username}
-                        onChange={handleUsernameChange}
-                      />
-                      {usernameError && (
-                        <p className="text-red-500 text-sm mt-1">
-                          {usernameError}
-                        </p>
-                      )}
-                    </div>
-                    <div className="mb-2">
-                      <label className="font-semibold">Email:</label>
-                      <input
-                        className="form-input mt-1 rounded-md w-full border border-gray-300 p-1"
-                        type="email"
-                        value={email}
-                        onChange={handleEmailChange}
-                      />
-                      {emailError && (
-                        <p className="text-red-500 text-sm mt-1">
-                          {emailError}
-                        </p>
-                      )}
-                    </div>
-                    <div className="mb-2">
-                      <label className="font-semibold">Password:</label>
-                      <input
-                        className="form-input mt-1 rounded-md w-full border border-gray-300 p-1"
-                        type="password"
-                        value={password}
-                        onChange={handlePasswordChange}
-                      />
-                      {passwordError && (
-                        <p className="text-red-500 text-sm mt-1">
-                          {passwordError}
-                        </p>
-                      )}
-                    </div>
-                    <div className="mb-2">
-                      <label className="font-semibold">Confirm Password:</label>
-                      <input
-                        className="form-input mt-1 rounded-md w-full border border-gray-300 p-1"
-                        type="password"
-                        value={confirmPassword}
-                        onChange={handleConfirmPasswordChange}
-                      />
-                      {confirmPasswordError && (
-                        <p className="text-red-500 text-sm mt-1">
-                          {confirmPasswordError}
-                        </p>
-                      )}
-                    </div>
-                    <div className="mb-2">
-                      <input
-                        type="submit"
-                        className="cursor-pointer bg-indigo-600 hover:bg-indigo-700 text-white rounded-md w-full py-2"
-                        value="Register"
-                      />
-                    </div>
-                    <div className="text-center">
-                      <span className="text-gray-600 mr-2">
-                        Already have an account?
-                      </span>
-                      <Link to={"/login"}>
-                        <span className="text-indigo-700 font-bold cursor-pointer hover:underline">
-                          Sign In
+                      <div className="mb-2">
+                        <label className="font-semibold">First Name:</label>
+                        <input
+                          className="form-input mt-1 rounded-md w-full border border-gray-300 p-1"
+                          type="text"
+                          value={firstname}
+                          onChange={handleFirstnameChange}
+                        />
+                        {firstnameError && (
+                          <p className="text-red-500 text-sm mt-1">
+                            {firstnameError}
+                          </p>
+                        )}
+                      </div>
+                      <div className="mb-2">
+                        <label className="font-semibold">Last Name:</label>
+                        <input
+                          className="form-input mt-1 rounded-md w-full border border-gray-300 p-1"
+                          type="text"
+                          value={lastname}
+                          onChange={handleLastnameChange}
+                        />
+                        {lastnameError && (
+                          <p className="text-red-500 text-sm mt-1">
+                            {lastnameError}
+                          </p>
+                        )}
+                      </div>
+                      <div className="mb-2">
+                        <label className="font-semibold">Username:</label>
+                        <input
+                          className="form-input mt-1 rounded-md w-full border border-gray-300 p-1"
+                          type="text"
+                          value={username}
+                          onChange={handleUsernameChange}
+                        />
+                        {usernameError && (
+                          <p className="text-red-500 text-sm mt-1">
+                            {usernameError}
+                          </p>
+                        )}
+                      </div>
+                      <div className="mb-2">
+                        <label className="font-semibold">Email:</label>
+                        <input
+                          className="form-input mt-1 rounded-md w-full border border-gray-300 p-1"
+                          type="email"
+                          value={email}
+                          onChange={handleEmailChange}
+                        />
+                        {emailError && (
+                          <p className="text-red-500 text-sm mt-1">
+                            {emailError}
+                          </p>
+                        )}
+                      </div>
+                      <div className="mb-2">
+                        <label className="font-semibold">Password:</label>
+                        <input
+                          className="form-input mt-1 rounded-md w-full border border-gray-300 p-1"
+                          type="password"
+                          value={password}
+                          onChange={handlePasswordChange}
+                        />
+                        {passwordError && (
+                          <p className="text-red-500 text-sm mt-1">
+                            {passwordError}
+                          </p>
+                        )}
+                      </div>
+                      <div className="mb-2">
+                        <label className="font-semibold">
+                          Confirm Password:
+                        </label>
+                        <input
+                          className="form-input mt-1 rounded-md w-full border border-gray-300 p-1"
+                          type="password"
+                          value={confirmPassword}
+                          onChange={handleConfirmPasswordChange}
+                        />
+                        {confirmPasswordError && (
+                          <p className="text-red-500 text-sm mt-1">
+                            {confirmPasswordError}
+                          </p>
+                        )}
+                      </div>
+                      <div className="mb-2">
+                        <input
+                          type="submit"
+                          className="cursor-pointer bg-indigo-600 hover:bg-indigo-700 text-white rounded-md w-full py-2"
+                          value="Register"
+                        />
+                      </div>
+                      <div className="text-center">
+                        <span className="text-gray-600 mr-2">
+                          Already have an account?
                         </span>
-                      </Link>
+                        <Link to={"/login"}>
+                          <span className="text-indigo-700 font-bold cursor-pointer hover:underline">
+                            Sign In
+                          </span>
+                        </Link>
+                      </div>
                     </div>
-                  </div>
-                </form>
+                  </form>
                 )}
                 {showOtpForm && (
-                <form onSubmit={handleOTPVerificationSubmit}>
-                  <div className="flex items-center justify-center mb-4">
-                    <p>Time remaining: {timer} seconds</p>
-                  </div>
-                  <div className="flex space-x-2 items-center justify-center">
-                  {Array.from({ length: 4 }).map((_, index) => (
-                    <input
-                      key={index}
-                      type='password'
-                      maxLength="1"
-                      ref={otpInputRefs.current[index]}
-                      value={otp[index] || ''}
-                      onChange={(e) => handleOtpChange(index, e.target.value)}
-                      onKeyUp={(e) => handleKeyUp(index, e)}
-                      onKeyDown={(e) => handleKeyDown(e, index)}
-                      className='w-10 border border-gray-300 rounded-md py-2 px-3 focus:border-blue-500 focus:ring-blue-500'
-                    />
-                  ))}
-                  </div>
-                  <div className="flex items-center justify-center mt-4">
-                  {otpError && (
-                        <p className="text-red-500 text-sm mt-1">
-                          {otpError}
-                        </p>
+                  <form onSubmit={handleOTPVerificationSubmit}>
+                    <div className="flex items-center justify-center mb-4">
+                      <p>Time remaining: {timer} seconds</p>
+                    </div>
+                    <div className="flex space-x-2 items-center justify-center">
+                      {Array.from({ length: 4 }).map((_, index) => (
+                        <input
+                          key={index}
+                          type="password"
+                          maxLength="1"
+                          ref={otpInputRefs.current[index]}
+                          value={otp[index] || ""}
+                          onChange={(e) =>
+                            handleOtpChange(index, e.target.value)
+                          }
+                          onKeyUp={(e) => handleKeyUp(index, e)}
+                          onKeyDown={(e) => handleKeyDown(e, index)}
+                          className="w-10 border border-gray-300 rounded-md py-2 px-3 focus:border-blue-500 focus:ring-blue-500"
+                        />
+                      ))}
+                    </div>
+                    <div className="flex items-center justify-center mt-4">
+                      {otpError && (
+                        <p className="text-red-500 text-sm mt-1">{otpError}</p>
                       )}
-                  </div>
-                  <div className="flex items-center justify-center mt-4">
-                  {resetOtp && <button style={{ backgroundColor: 'white', color: 'blue' }} onClick={handleResetotpClick}>Resend OTP</button>}
-                  </div>
-                  <div className="flex justify-center items-center mt-4">
-                    <button
-                      type="submit"
-                      className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-32"
-                    >
-                      Verify OTP
-                    </button>
-                  </div>
-                </form>
+                    </div>
+                    <div className="flex items-center justify-center mt-4">
+                      {resetOtp && (
+                        <button
+                          style={{ backgroundColor: "white", color: "blue" }}
+                          onClick={handleResetotpClick}
+                        >
+                          Resend OTP
+                        </button>
+                      )}
+                    </div>
+                    <div className="flex justify-center items-center mt-4">
+                      <button
+                        type="submit"
+                        className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-32"
+                      >
+                        Verify OTP
+                      </button>
+                    </div>
+                  </form>
                 )}
               </div>
             </div>
