@@ -1,23 +1,70 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
+import { useDispatch } from 'react-redux';
+import { listUsers } from '../../../redux/slice/adminSlice';
 
 // Register necessary components for Chart.js
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 const Dashboard = () => {
-  const chartData = {
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-    datasets: [
-      {
-        label: 'Users Registered',
-        data: [12, 19, 3, 5, 2, 3, 9, 6, 4, 8, 10, 12],
-        borderColor: 'rgba(99, 102, 241, 1)', // Indigo color
-        backgroundColor: 'rgba(99, 102, 241, 0.2)',
-        fill: true,
-      },
-    ],
+  const dispatch = useDispatch();
+  const [candidates, setCandidates] = useState([]);
+  const [recruiters, setRecruiters] = useState([]);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const candidateResponse = await dispatch(listUsers({ role: "USER" }));
+        setCandidates(candidateResponse.payload);
+
+        const recruiterResponse = await dispatch(listUsers({ role: "RECRUITER" }));
+        setRecruiters(recruiterResponse.payload);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    };
+
+    fetchUsers();
+  }, [dispatch]);
+
+  const generateChartData = (candidates) => {
+    const monthlyRegistrations = {};
+
+    candidates.forEach(candidate => {
+      const registrationDate = new Date(candidate.registrationDate);
+      const month = registrationDate.toLocaleString('default', { month: 'short' });
+      const year = registrationDate.getFullYear();
+      const monthYear = `${month} ${year}`;
+
+      if (!monthlyRegistrations[monthYear]) {
+        monthlyRegistrations[monthYear] = 0;
+      }
+
+      monthlyRegistrations[monthYear]++;
+    });
+
+    const sortedMonths = Object.keys(monthlyRegistrations).sort((a, b) => {
+      const [aMonth, aYear] = a.split(' ');
+      const [bMonth, bYear] = b.split(' ');
+      return new Date(aYear, new Date(`${aMonth} 1`).getMonth()) - new Date(bYear, new Date(`${bMonth} 1`).getMonth());
+    });
+
+    return {
+      labels: sortedMonths,
+      datasets: [
+        {
+          label: 'Users Registered',
+          data: sortedMonths.map(month => monthlyRegistrations[month]),
+          borderColor: 'rgba(99, 102, 241, 1)', // Indigo color
+          backgroundColor: 'rgba(99, 102, 241, 0.2)',
+          fill: true,
+        },
+      ],
+    };
   };
+
+  const chartData = generateChartData(candidates);
 
   const chartOptions = {
     responsive: true,
@@ -35,7 +82,7 @@ const Dashboard = () => {
   return (
     <div className="p-4">
       <div className="mb-8">
-      <h2 className="text-xl font-bold">Dashboard / Overview</h2>
+        <h2 className="text-xl font-bold">Dashboard / Overview</h2>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         <div className="bg-white shadow-md rounded-lg p-6">
@@ -45,7 +92,7 @@ const Dashboard = () => {
           <div className="bg-white shadow-md rounded-lg p-6 flex justify-between items-center">
             <div>
               <h3 className="text-lg font-semibold">Total Users</h3>
-              <p className="text-3xl font-bold">1,234</p>
+              <p className="text-3xl font-bold">{candidates.length}</p>
             </div>
             <div className="text-indigo-500">
               <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -57,7 +104,7 @@ const Dashboard = () => {
           <div className="bg-white shadow-md rounded-lg p-6 flex justify-between items-center">
             <div>
               <h3 className="text-lg font-semibold">Total Recruiters</h3>
-              <p className="text-3xl font-bold">567</p>
+              <p className="text-3xl font-bold">{recruiters.length}</p>
             </div>
             <div className="text-indigo-500">
               <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">

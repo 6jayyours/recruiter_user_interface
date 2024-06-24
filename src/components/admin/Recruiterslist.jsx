@@ -1,17 +1,30 @@
-import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux';
-import { listUsers } from '../../redux/slice/adminSlice';
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { listUsers } from "../../redux/slice/adminSlice";
+import ImageModal from "./sections/ImageModal";
 
 const Recruiterslist = () => {
   const dispatch = useDispatch();
-  const[recruiters, setRecruiters] = useState([]);
+  const [recruiters, setRecruiters] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedImageUrl, setSelectedImageUrl] = useState('');
+
+  const handleImageClick = (imageUrl) => {
+    setSelectedImageUrl(imageUrl);
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setSelectedImageUrl('');
+  };
 
   useEffect(() => {
-    const formData = { role: "RECRUITER" }; 
+    const formData = { role: "RECRUITER" };
     dispatch(listUsers(formData))
       .then((response) => {
-        console.log(response)
-        setRecruiters(response.payload)
+        console.log(response);
+        setRecruiters(response.payload);
       })
       .catch((error) => {});
   }, [dispatch]);
@@ -33,7 +46,7 @@ const Recruiterslist = () => {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
-          {recruiters.map((recruiter) => (
+            {recruiters.map((recruiter) => (
               <tr key={recruiter.id}>
                 <td className="py-3 px-4 flex items-center">
                   <img
@@ -42,30 +55,51 @@ const Recruiterslist = () => {
                     className="w-10 h-10 rounded-full"
                   />
                 </td>
-                <td className="py-3 px-4">{recruiter.firstName} {recruiter.lastName}</td>
                 <td className="py-3 px-4">
-                  <span className={`inline-block px-2 py-1 rounded ${recruiter.isActive ? 'bg-green-500' : 'bg-gray-400'} text-white`}>
-                    {recruiter.isActive ? 'Active' : 'Inactive'}
+                  {recruiter.firstName} {recruiter.lastName}
+                </td>
+                <td className="py-3 px-4">
+                  <span
+                    className={`inline-block px-2 py-1 rounded ${
+                      recruiter.isActive ? "bg-green-500" : "bg-gray-400"
+                    } text-white`}
+                  >
+                    {recruiter.isActive ? "Active" : "Inactive"}
                   </span>
                 </td>
                 <td className="py-3 px-4">
-                  <span className={`inline-block px-2 py-1 rounded bg-blue-500 text-white`}>
-                    {recruiter.idImageUrl} // Adjust field name accordingly
-                  </span>
+                  <img
+                    className="h-14 w-auto"
+                    src={recruiter.idImageUrl}
+                    alt="Image not available"
+                    onClick={() => handleImageClick(recruiter.idImageUrl)}
+                  />
+                  {showModal && (
+                    <ImageModal
+                      showModal={showModal}
+                      imageUrl={selectedImageUrl}
+                      onClose={handleCloseModal}
+                    />
+                  )}
                 </td>
                 <td className="py-3 px-4">
-                  <button className={`py-1 px-3 rounded ${recruiter.isActive ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'} text-white`}>
-                    {recruiter.isActive ? 'Block' : 'Unblock'}
+                  <button
+                    className={`py-1 px-3 rounded ${
+                      recruiter.isActive
+                        ? "bg-red-500 hover:bg-red-600"
+                        : "bg-green-500 hover:bg-green-600"
+                    } text-white`}
+                  >
+                    {recruiter.isActive ? "Block" : "Unblock"}
                   </button>
                 </td>
               </tr>
             ))}
-            
           </tbody>
         </table>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Recruiterslist
+export default Recruiterslist;
