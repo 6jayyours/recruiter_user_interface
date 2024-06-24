@@ -39,8 +39,8 @@ const HirerRegister = () => {
     setFirstname(e.target.value);
 
     // Validate firstname
-    if (e.target.value.length < 6) {
-      setFirstnameError("First name must be at least 6 characters long");
+    if (e.target.value.trim() === "") {
+      setFirstnameError("First name cannot be empty");
     } else {
       setFirstnameError("");
     }
@@ -62,11 +62,11 @@ const HirerRegister = () => {
   const handleUsernameChange = (e) => {
     setUsername(e.target.value);
 
-    // Validate username
-    if (e.target.value.length < 5) {
-      setUsernameError("Username must be at least 5 characters long");
+    // Validate lastname
+    if (e.target.value.trim() === "") {
+      setLastnameError("Last name cannot be empty");
     } else {
-      setUsernameError("");
+      setLastnameError("");
     }
   };
 

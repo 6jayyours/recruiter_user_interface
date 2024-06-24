@@ -129,6 +129,7 @@ const UserRegister = () => {
     const userData = { email };
     dispatch(resendOTP(userData))
       .then((response) => {
+        console.log(response)
         toast.success("OTP resent successfully.");
       })
       .catch((error) => {
@@ -144,8 +145,8 @@ const UserRegister = () => {
     setFirstname(e.target.value);
 
     // Validate firstname
-    if (e.target.value.length < 6) {
-      setFirstnameError("First name must be at least 6 characters long");
+    if (e.target.value.trim() === "") {
+      setFirstnameError("First name cannot be empty");
     } else {
       setFirstnameError("");
     }
@@ -156,8 +157,8 @@ const UserRegister = () => {
     setLastname(e.target.value);
 
     // Validate lastname
-    if (e.target.value.length < 4) {
-      setLastnameError("Last name must be at least 4 characters long");
+    if (e.target.value.trim() === "") {
+      setLastnameError("Last name cannot be empty");
     } else {
       setLastnameError("");
     }
@@ -220,27 +221,54 @@ const UserRegister = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (firstname < 6) {
-      setFirstnameError("First name must be at least 6 characters long");
+    
+    let hasErrors = false;
+
+    if (firstname.trim() === "") {
+      setFirstnameError("First name cannot be empty");
+      hasErrors = true;
+    } else {
+      setFirstnameError("");
     }
-    if (lastname < 4) {
-      setLastnameError("Last name must be at least 4 characters long");
+
+    if (lastname.trim() === "") {
+      setLastnameError("Last name cannot be empty");
+      hasErrors = true;
+    } else {
+      setLastnameError("");
     }
-    if (username < 5) {
+
+    if (username.length < 5) {
       setUsernameError("Username must be at least 5 characters long");
+      hasErrors = true;
+    } else {
+      setUsernameError("");
     }
+
     if (!/\S+@\S+\.\S+/.test(email)) {
       setEmailError("Invalid email address");
+      hasErrors = true;
+    } else {
+      setEmailError("");
     }
-    const passwordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
+
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
     if (!passwordRegex.test(password)) {
-      setPasswordError(
-        "Password must be at least 6 characters long and include one special character, one number, one uppercase letter, and one lowercase letter"
-      );
+      setPasswordError("Password must be at least 6 characters long and include one special character, one number, one uppercase letter, and one lowercase letter");
+      hasErrors = true;
+    } else {
+      setPasswordError("");
     }
+
     if (confirmPassword !== password) {
       setConfirmPasswordError("Passwords do not match");
+      hasErrors = true;
+    } else {
+      setConfirmPasswordError("");
+    }
+
+    if (hasErrors) {
+      return;
     }
 
     const formData = {
