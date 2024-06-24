@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { listUsers } from "../../redux/slice/adminSlice";
 
 const Userslist = () => {
@@ -10,6 +10,7 @@ const Userslist = () => {
     const formData = { role: "USER" };
     dispatch(listUsers(formData))
       .then((response) => {
+        console.log(response)
         setCandidates(response.payload);
       })
       .catch((error) => {});

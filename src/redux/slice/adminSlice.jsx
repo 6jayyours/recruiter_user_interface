@@ -10,7 +10,6 @@ export const listUsers = createAsyncThunk(
         // Get the token from the auth state
         const state = getState();
         const token = state.auth.token;
-  
         const response = await axios.get(`${ADMIN_URL}users`, {
           params: formData,
           headers: {
