@@ -10,6 +10,7 @@ const Recruiterslist = () => {
     const formData = { role: "RECRUITER" }; 
     dispatch(listUsers(formData))
       .then((response) => {
+        console.log(response)
         setRecruiters(response.payload)
       })
       .catch((error) => {});
