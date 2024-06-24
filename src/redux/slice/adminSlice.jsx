@@ -4,10 +4,20 @@ import { ADMIN_URL } from "../../constants/Url";
 
 export const listUsers = createAsyncThunk(
     "admin/listUsers",
-    async (formData, { rejectWithValue }) => {
+    async (formData, thunkAPI) => {
+      const { rejectWithValue, getState } = thunkAPI;
       try {
-        const response = await axios.get(`${ADMIN_URL}users`, { params: formData });
-        console.log(response)
+        // Get the token from the auth state
+        const state = getState();
+        const token = state.auth.token;
+  
+        const response = await axios.get(`${ADMIN_URL}users`, {
+          params: formData,
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        console.log(response);
         return response.data;
       } catch (error) {
         return rejectWithValue(error.message);

@@ -1,18 +1,16 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { listUsers } from "../../redux/slice/adminSlice";
 
 const Userslist = () => {
   const dispatch = useDispatch();
-
-  const token = useSelector((state)=>state.token)
-  console.log(token)
+  const [candidates, setCandidates] = useState([]);
 
   useEffect(() => {
-    const formData = { role: "USER" }; // Replace "USER" with the appropriate role
+    const formData = { role: "USER" };
     dispatch(listUsers(formData))
       .then((response) => {
-        console.log(response);
+        setCandidates(response.payload);
       })
       .catch((error) => {});
   }, [dispatch]);
@@ -34,81 +32,51 @@ const Userslist = () => {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
-            <tr>
-              <td className="py-3 px-4 flex items-center">
-                <img
-                  src="user_image_url"
-                  alt="User"
-                  className="w-10 h-10 rounded-full"
-                />
-              </td>
-              <td className="py-3 px-4">John Doe</td>
-              <td className="py-3 px-4">
-                <span className="inline-block px-2 py-1 rounded bg-green-500 text-white">
-                  Active
-                </span>
-              </td>
-              <td className="py-3 px-4">
-                <span className="inline-block px-2 py-1 rounded bg-blue-500 text-white">
-                  Premium
-                </span>
-              </td>
-              <td className="py-3 px-4">
-                <button className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded">
-                  Block
-                </button>
-              </td>
-            </tr>
-            <tr>
-              <td className="py-3 px-4 flex items-center">
-                <img
-                  src="user_image_url"
-                  alt="User"
-                  className="w-10 h-10 rounded-full"
-                />
-              </td>
-              <td className="py-3 px-4">Jane Smith</td>
-              <td className="py-3 px-4">
-                <span className="inline-block px-2 py-1 rounded bg-gray-400 text-white">
-                  Inactive
-                </span>
-              </td>
-              <td className="py-3 px-4">
-                <span className="inline-block px-2 py-1 rounded bg-yellow-500 text-white">
-                  Free
-                </span>
-              </td>
-              <td className="py-3 px-4">
-                <button className="bg-green-500 hover:bg-green-600 text-white py-1 px-3 rounded">
-                  Unblock
-                </button>
-              </td>
-            </tr>
-            <tr>
-              <td className="py-3 px-4 flex items-center">
-                <img
-                  src="user_image_url"
-                  alt="User"
-                  className="w-10 h-10 rounded-full"
-                />
-              </td>
-              <td className="py-3 px-4">Jane Smith</td>
-              <td className="py-3 px-4">
-                <span className="inline-block px-2 py-1 rounded bg-gray-400 text-white">
-                  Inactive
-                </span>
-              </td>
-              <td className="py-3 px-4">
-                <span className="inline-block px-2 py-1 rounded bg-yellow-500 text-white">
-                  Free
-                </span>
-              </td>
-              <td className="py-3 px-4">
-                <button className="bg-green-500 hover:bg-green-600 text-white py-1 px-3 rounded">
-                  Unblock
-                </button>
-              </td>
-            </tr>
+            {candidates.map((user) => (
+              <tr key={user.id}>
+                <td className="py-3 px-4 flex items-center">
+                  <img
+                    src={user.profileImageUrl} // Adjust field name accordingly
+                    alt="User"
+                    className="w-10 h-10 rounded-full"
+                  />
+                </td>
+                <td className="py-3 px-4">
+                  {user.firstName} {user.lastName}
+                </td>
+                <td className="py-3 px-4">
+                  <span
+                    className={`inline-block px-2 py-1 rounded ${
+                      user.isActive ? "bg-green-500" : "bg-gray-400"
+                    } text-white`}
+                  >
+                    {user.isActive ? "Active" : "Inactive"}
+                  </span>
+                </td>
+                <td className="py-3 px-4">
+                  <span
+                    className={`inline-block px-2 py-1 rounded ${
+                      user.subscription === "Premium"
+                        ? "bg-blue-500"
+                        : "bg-yellow-500"
+                    } text-white`}
+                  >
+                    {user.subscription ? "Subscribed" : "Free"}
+                  </span>
+                </td>
+                <td className="py-3 px-4">
+                  <button
+                    className={`py-1 px-3 rounded ${
+                      user.isActive
+                        ? "bg-red-500 hover:bg-red-600"
+                        : "bg-green-500 hover:bg-green-600"
+                    } text-white`}
+                  >
+                    {user.isActive ? "Block" : "Unblock"}
+                  </button>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
