@@ -3,6 +3,7 @@ import { combineReducers } from 'redux';
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage'; // defaults to localStorage for web
 import authReducer from "./slice/authSlice";
+import adminSlice from './slice/adminSlice';
 
 // Create a persist config
 const persistConfig = {
@@ -13,6 +14,7 @@ const persistConfig = {
 // Combine reducers
 const rootReducer = combineReducers({
   auth: authReducer,
+  admin: adminSlice,
 });
 
 // Apply persistReducer middleware

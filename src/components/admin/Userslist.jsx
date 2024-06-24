@@ -1,6 +1,22 @@
-import React from 'react';
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { listUsers } from "../../redux/slice/adminSlice";
 
 const Userslist = () => {
+  const dispatch = useDispatch();
+
+  const token = useSelector((state)=>state.token)
+  console.log(token)
+
+  useEffect(() => {
+    const formData = { role: "USER" }; // Replace "USER" with the appropriate role
+    dispatch(listUsers(formData))
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {});
+  }, [dispatch]);
+
   return (
     <div className="p-4">
       <div className="mb-4">
@@ -93,7 +109,6 @@ const Userslist = () => {
                 </button>
               </td>
             </tr>
-            
           </tbody>
         </table>
       </div>

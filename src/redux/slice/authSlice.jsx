@@ -79,15 +79,22 @@ const authSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(loginUser.pending, (state) => {
-        // Handle pending state
-      })
-      .addCase(loginUser.fulfilled, (state, action) => {
-        // Handle fulfilled state
-      })
-      .addCase(loginUser.rejected, (state, action) => {
-        // Handle rejected state
-      });
+    .addCase(loginUser.pending, (state) => {
+      state.error = null;
+    })
+    .addCase(loginUser.fulfilled, (state, action) => {
+      state.id = action.payload.id;
+      state.user = action.payload.user;
+      state.token = action.payload.token;
+      state.role = action.payload.role;
+      state.subscription = action.payload.subscription;
+      state.isAuthenticated = true;
+      state.error = null;
+    })
+    .addCase(loginUser.rejected, (state, action) => {
+      state.error = action.payload;
+      state.isAuthenticated = false;
+    });
   },
 });
 
