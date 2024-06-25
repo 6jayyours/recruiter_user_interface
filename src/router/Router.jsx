@@ -21,6 +21,7 @@ import NotAuthorized from "../pages/commonpages/NotAuthorized.jsx";
 import HirerDashboard from "../pages/hirerpages/HirerDashboard.jsx";
 import HirerProfile from "../components/recruiter/HirerProfile.jsx";
 import NotFound from "../pages/commonpages/NotFound.jsx";
+import Ide from "../pages/userpages/Ide.jsx";
 
 const router = createBrowserRouter([
   { path: "/login", element: <Login /> },
@@ -35,6 +36,7 @@ const router = createBrowserRouter([
       { path: "/about", element: <About /> },
       { path: "/contact", element: <Contact /> },
       { path: "/jobs", element: <Jobs /> },
+      { path: "/compiler", element: <Ide /> },
     ],
   },
 
@@ -132,6 +134,7 @@ const router = createBrowserRouter([
   },
   { path: "/noauthorization", element: <NotAuthorized /> },
   { path: "/pagenotfound", element: <NotFound /> },
+
 ]);
 
 export default router;
