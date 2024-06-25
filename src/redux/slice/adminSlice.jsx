@@ -1,6 +1,6 @@
 import axios from "axios";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { ADMIN_URL, AUTH_URL } from "../../constants/Url";
+import { ADMIN_URL, AUTH_URL, USER_SERVICE } from "../../constants/Url";
 
 export const listUsers = createAsyncThunk(
   "admin/listUsers",
@@ -25,30 +25,34 @@ export const listUsers = createAsyncThunk(
 
 export const profilePicture = createAsyncThunk(
   "admin/profilePicture",
-  async (formData, { rejectWithValue, getState }) => {
+  async ({ formData }, { rejectWithValue, getState }) => {
     try {
       const state = getState();
       const token = state.auth.token; // Assuming token is stored in auth slice
-      const response = await axios.post(`${AUTH_URL}profilePicture`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data", // Adjust content type if needed
-        },
-      });
-      return response.data;
+      const response = await axios.post(`${USER_SERVICE}profilePicture`, 
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data', // Explicitly setting content type
+          },
+        }
+      );
+      return response.data; // Return the response data on success
     } catch (error) {
-      return rejectWithValue(error.message);
+      return rejectWithValue(error.message); // Reject with the error message on failure
     }
   }
 );
 
 export const getPicture = createAsyncThunk(
   "admin/getPicture",
-  async (formData, { rejectWithValue, getState }) => {
+  async (id, { rejectWithValue, getState }) => {
     try {
       const state = getState();
       const token = state.auth.token; // Assuming token is stored in auth slice
-      const response = await axios.get(`${AUTH_URL}getProfileImage`, formData,{
+      const response = await axios.get(`${USER_SERVICE}getProfileImage`, {
+        params: { id },
         headers: {
           Authorization: `Bearer ${token}`,
         },

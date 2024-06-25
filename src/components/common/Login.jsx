@@ -76,7 +76,11 @@ const Login = () => {
         .then((response) => {
           if (response.payload.message === "User logged in successfully") {
             notifySuccess();
-            navigate("/");
+            if(response.payload.role==="ADMIN"){
+              navigate("/admin/dashboard")
+            } else {
+              navigate("/");
+            }
           } else {
             setLoginError(response.payload.message);
           }

@@ -9,13 +9,18 @@ import HirerRegister from "../components/common/HirerRegister.jsx";
 import Jobs from "../pages/userpages/Jobs.jsx";
 import AdminDashboard from "../pages/adminpages/AdminDashboard.jsx";
 import Dashboard from "../components/admin/sections/Dashboard.jsx";
-import Userslist from "../components/admin/Userslist.jsx"
+import Userslist from "../components/admin/Userslist.jsx";
 import Joblist from "../components/admin/Joblist.jsx";
 import Recruiterslist from "../components/admin/Recruiterslist.jsx";
 import Applicationlist from "../components/admin/Applicationlist.jsx";
 import AdminProfile from "../components/admin/AdminProfile.jsx";
 import AdminSettings from "../components/admin/AdminSettings.jsx";
 import Candidates from "../pages/hirerpages/Candidates.jsx";
+import ProtectedRoute from "./ProtectedRoute.jsx";
+import NotAuthorized from "../pages/commonpages/NotAuthorized.jsx";
+import HirerDashboard from "../pages/hirerpages/HirerDashboard.jsx";
+import HirerProfile from "../components/recruiter/HirerProfile.jsx";
+import NotFound from "../pages/commonpages/NotFound.jsx";
 
 const router = createBrowserRouter([
   { path: "/login", element: <Login /> },
@@ -32,29 +37,101 @@ const router = createBrowserRouter([
       { path: "/jobs", element: <Jobs /> },
     ],
   },
+
   {
     path: "/admin",
-    element: <AdminDashboard/>,
+    element: <AdminDashboard />,
     children: [
-      {path: "dashboard", element: <Dashboard />},
-      {path: "users", element: <Userslist />},
-      {path: "recruiters", element: <Recruiterslist />},
-      {path: "jobs", element: <Joblist />},
-      {path: "applications", element: <Applicationlist />},
-      {path: "profile", element: <AdminProfile />},
-      {path: "settings", element: <AdminSettings />},
+      {
+        path: "dashboard",
+        element: (
+          <ProtectedRoute requiredRole="ADMIN">
+            <Dashboard />{" "}
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "users",
+        element: (
+          <ProtectedRoute requiredRole="ADMIN">
+            <Userslist />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "recruiters",
+        element: (
+          <ProtectedRoute requiredRole="ADMIN">
+            <Recruiterslist />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "jobs",
+        element: (
+          <ProtectedRoute requiredRole="ADMIN">
+            <Joblist />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "applications",
+        element: (
+          <ProtectedRoute requiredRole="ADMIN">
+            <Applicationlist />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "profile",
+        element: (
+          <ProtectedRoute requiredRole="ADMIN">
+            <AdminProfile />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "settings",
+        element: (
+          <ProtectedRoute requiredRole="ADMIN">
+            <AdminSettings />
+          </ProtectedRoute>
+        ),
+      },
+    ],
+  },
+
+  {
+    path: "/recruiter",
+    element: <App />,
+    children: [
+      {
+        path: "home",
+        element: (
+          <ProtectedRoute requiredRole="RECRUITER">
+            <Landing />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "candidates",
+        element: (
+          <ProtectedRoute requiredRole="RECRUITER">
+            <Candidates />
+          </ProtectedRoute>
+        ),
+      },
     ],
   },
   {
     path: "/recruiter",
-    element: <App/>,
+    element: <HirerDashboard />,
     children: [
-      {path: "home", element: <Landing />},
-      {path: "candidates", element: <Candidates/>},
-
+      { path: "profile", element: <ProtectedRoute requiredRole="RECRUITER"><HirerProfile /></ProtectedRoute> },
     ],
   },
-
+  { path: "/noauthorization", element: <NotAuthorized /> },
+  { path: "/pagenotfound", element: <NotFound /> },
 ]);
 
 export default router;

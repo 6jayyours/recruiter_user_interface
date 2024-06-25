@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { getPicture, profilePicture } from "../../redux/slice/adminSlice";
+import React, { useEffect, useState } from 'react'
+import { getPicture, profilePicture } from '../../redux/slice/adminSlice';
+import { useDispatch, useSelector } from 'react-redux';
 
-const AdminProfile = () => {
-  const dispatch = useDispatch();
+const HirerProfile = () => {
+    const dispatch = useDispatch();
   const userId = useSelector((state) => state.auth.userId); // Assuming userId is stored in auth slice
 
   const [selectedFile, setSelectedFile] = useState(null);
@@ -63,11 +63,10 @@ const AdminProfile = () => {
         console.error("Error uploading profile picture:", error);
       });
   };
-
   return (
     <div className="p-6 bg-white min-h-screen">
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-gray-800">Dashboard / Admin Profile</h2>
+        <h2 className="text-2xl font-bold text-gray-800">Dashboard / Recruiter Profile</h2>
       </div>
       <div className="overflow-x-auto">
         <div className="flex flex-col md:flex-row items-center md:items-end mb-8">
@@ -239,7 +238,7 @@ const AdminProfile = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default AdminProfile;
+export default HirerProfile

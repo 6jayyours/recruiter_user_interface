@@ -4,3 +4,4 @@
 
 export const AUTH_URL = "http://localhost:8765/api/v1/auth/"
 export const ADMIN_URL = "http://localhost:8765/api/v1/admin/"
+export const USER_SERVICE = "http://localhost:8765/api/v1/user/"

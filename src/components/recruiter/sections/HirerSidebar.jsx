@@ -1,13 +1,11 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import navLogo from "../../../assets/logo.png";
-import { FaTachometerAlt, FaUser, FaUserTie } from "react-icons/fa";
-import { PiSuitcaseSimpleFill } from "react-icons/pi";
-import { RiMailSendLine } from "react-icons/ri";
-import { IoSettings } from "react-icons/io5";
-import { MdManageAccounts, MdLogout  } from "react-icons/md";
+import React from 'react'
+import { Link } from 'react-router-dom'
+import navLogo from '../../../assets/logo.png'
+import { PiSuitcaseSimpleFill } from 'react-icons/pi'
+import { MdLibraryAdd, MdLogout, MdManageAccounts } from 'react-icons/md'
+import { RiMailSendLine } from 'react-icons/ri'
 
-const AdminSidebar = () => {
+const HirerSidebar = () => {
   return (
     <div className="h-screen bg-gray-800 text-white fixed w-64 flex flex-col">
       <div className="flex items-center justify-center py-6">
@@ -21,49 +19,34 @@ const AdminSidebar = () => {
       <div className="flex-grow">
         <div className="px-4 py-2">
           <Link
-            to="/admin/dashboard"
+            to="/recruiter/profile"
             className="flex items-center justify-between mb-4 hover:bg-gray-600 transition-all duration-300 cursor-pointer p-2 rounded"
           >
             <div className="flex items-center">
-              <FaTachometerAlt className="mr-2" />
-              <h2 className="text-lg font-semibold">Dashboard</h2>
+              <MdManageAccounts className="mr-2" />
+              <h2 className="text-lg font-semibold">Profile Settings</h2>
             </div>
-            <span className="bg-indigo-700 rounded-md px-2 text-sm">NEW</span>
           </Link>
           <Link
-            to="/admin/users"
-            className="flex items-center mb-4 hover:bg-gray-600 transition-all duration-300 cursor-pointer p-2 rounded"
-          >
-            <FaUser className="mr-2" />
-            <h2 className="text-lg font-semibold">Users</h2>
-          </Link>
-          <Link
-            to="/admin/recruiters"
-            className="flex items-center mb-4 hover:bg-gray-600 transition-all duration-300 cursor-pointer p-2 rounded"
-          >
-            <FaUserTie className="mr-2" />
-            <h2 className="text-lg font-semibold">Recruiters</h2>
-          </Link>
-          <Link
-            to="/admin/jobs"
+            to="/recruiter/myjobs"
             className="flex items-center mb-4 hover:bg-gray-600 transition-all duration-300 cursor-pointer p-2 rounded"
           >
             <PiSuitcaseSimpleFill className="mr-2" />
-            <h2 className="text-lg font-semibold">Jobs</h2>
+            <h2 className="text-lg font-semibold">My Jobs</h2>
           </Link>
           <Link
-            to="/admin/applications"
+            to="/recruiter/applications"
             className="flex items-center mb-4 hover:bg-gray-600 transition-all duration-300 cursor-pointer p-2 rounded"
           >
             <RiMailSendLine className="mr-2" />
             <h2 className="text-lg font-semibold">Applications</h2>
           </Link>
           <Link
-            to="/admin/profile"
+            to="/recruiter/postjob"
             className="flex items-center mb-4 hover:bg-gray-600 transition-all duration-300 cursor-pointer p-2 rounded"
           >
-            <MdManageAccounts className="mr-2" />
-            <h2 className="text-lg font-semibold">Profile Settings</h2>
+            <MdLibraryAdd className="mr-2" />
+            <h2 className="text-lg font-semibold">Post Job</h2>
           </Link>
         </div>
       </div>
@@ -77,7 +60,7 @@ const AdminSidebar = () => {
         </Link>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default AdminSidebar;
+export default HirerSidebar

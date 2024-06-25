@@ -11,7 +11,7 @@ const AppFooter = () => {
         >
           Recruiter
         </a>
-        <span className="ml-1">&copy; 2024 Brototype</span>
+        <span className="ml-1">&copy; 2024 Bootcamp</span>
       </div>
       <div className="ml-auto">
         <span className="mr-1">Powered by</span>

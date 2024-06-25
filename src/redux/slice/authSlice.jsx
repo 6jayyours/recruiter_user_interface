@@ -7,7 +7,6 @@ export const loginUser = createAsyncThunk(
   async (formData, { rejectWithValue }) => {
     try {
       const response = await axios.post(`${AUTH_URL}authenticate`, formData);
-      console.log(response)
       return response.data;
     } catch (error) {
       return rejectWithValue(error.message);
