@@ -16,12 +16,16 @@ const Navbar = () => {
   const role = useSelector((state) => state.auth.role)
   console.log(id,role)
   const [profileImage, setProfileImage] = useState(null);
+  const [userName, setUsername] = useState(null);
 
 
   useEffect(() => {
       dispatch(getUser(id))
         .then((response) => {
-          console.log(response)
+          setProfileImage(response.payload.idImageUrl)
+          const firstname = response.payload.firtsName;
+          const lastName = response.payload.lastName;
+          setUsername(firstname+lastName);
         })
         .catch((error) => {
           console.error("Failed to fetch user:", error);
@@ -46,8 +50,8 @@ const Navbar = () => {
   const userDetailsAndIcon = authenticated && (
     <div className="flex items-center space-x-4">
       <FaMessage className="cursor-pointer text-2xl" /> {/* Replace FaBell with your actual message icon component */}
-      <img src="" alt="User Profile Picture" className="w-12 h-12 rounded-full" />
-      <span className="font-semibold">Arjun</span>
+      <img src={profileImage} alt="User Profile Picture" className="w-12 h-12 rounded-full" />
+      <span className="font-semibold">{userName}</span>
     </div>
   );
 
