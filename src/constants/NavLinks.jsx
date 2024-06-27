@@ -35,7 +35,7 @@ export  const UserLinks = [
     {
       id: 3,
       name: "Candidates",
-      link: "/candidates",
+      link: "/recruiter/candidates",
     },
     {
       id: 4,

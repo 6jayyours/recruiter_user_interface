@@ -50,6 +50,7 @@ export const verifyOTP = createAsyncThunk(
   }
 );
 
+
 export const getUser = createAsyncThunk(
   "auth/getUser",
   async (id, { getState, rejectWithValue }) => {
@@ -95,7 +96,17 @@ const initialState = {
 const authSlice = createSlice({
   name: "auth",
   initialState,
-  reducers: {},
+  reducers: {
+    logoutUser: (state) => {
+      state.id = null;
+      state.user = null;
+      state.token = null;
+      state.role = null;
+      state.subscription = null;
+      state.error = null;
+      state.isAuthenticated = false;
+    },
+  },
   extraReducers: (builder) => {
     builder
     .addCase(loginUser.pending, (state) => {
@@ -113,8 +124,10 @@ const authSlice = createSlice({
     .addCase(loginUser.rejected, (state, action) => {
       state.error = action.payload;
       state.isAuthenticated = false;
-    });
+    })
   },
 });
+
+export const { logoutUser } = authSlice.actions;
 
 export default authSlice.reducer;

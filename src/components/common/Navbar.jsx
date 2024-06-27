@@ -6,31 +6,38 @@ import navLogo from "../../assets/logo.png";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { FaMessage } from "react-icons/fa6";
-import { getUser } from "../../redux/slice/authSlice";
+import { getUser, logoutUser } from "../../redux/slice/authSlice";
 
 const Navbar = () => {
-  const links = UserLinks;
   const dispatch = useDispatch();
   const authenticated = useSelector((state) => state.auth.isAuthenticated);
   const id = useSelector((state) => state.auth.id);
-  const role = useSelector((state) => state.auth.role)
-  console.log(id,role)
+  const role = useSelector((state) => state.auth.role);
+
+  const links = role === "RECRUITER" ? HirerLinks : UserLinks; 
+
   const [profileImage, setProfileImage] = useState(null);
   const [userName, setUsername] = useState(null);
 
+  const handleLogout = () => {
+    // Dispatch logout action
+    dispatch(logoutUser());
+  };
 
   useEffect(() => {
+    if (authenticated) {
       dispatch(getUser(id))
         .then((response) => {
-          setProfileImage(response.payload.idImageUrl)
-          const firstname = response.payload.firtsName;
+          setProfileImage(response.payload.idImageUrl);
+          const firstname = response.payload.firstName;
           const lastName = response.payload.lastName;
-          setUsername(firstname+lastName);
+          setUsername(`${firstname} ${lastName}`);
         })
         .catch((error) => {
           console.error("Failed to fetch user:", error);
         });
-  }, [dispatch]);
+    }
+  }, [dispatch, authenticated, id]);
 
   const [showMenu, setShowMenu] = useState(false);
 
@@ -39,7 +46,7 @@ const Navbar = () => {
   };
 
   // Conditionally render the "Get Started" button based on authentication status
-  const getStartedButton =!authenticated && (
+  const getStartedButton = !authenticated && (
     <Link to={"/login"}>
       <button className="hidden md:block bg-indigo-700 text-white hover:bg-sky-950 duration-300 rounded-lg py-2 px-4">
         Get Started
@@ -49,16 +56,17 @@ const Navbar = () => {
 
   const userDetailsAndIcon = authenticated && (
     <div className="flex items-center space-x-4">
-      <FaMessage className="cursor-pointer text-2xl" /> {/* Replace FaBell with your actual message icon component */}
-      <img src={profileImage} alt="User Profile Picture" className="w-12 h-12 rounded-full" />
+      <FaMessage className="cursor-pointer text-2xl mr-4 text-indigo-800" /> {/* Replace FaBell with your actual message icon component */}
+      <img src={profileImage} alt="User Profile" className="w-12 h-12 rounded-full" />
       <span className="font-semibold">{userName}</span>
+      <h2 className="cursor-pointer" onClick={handleLogout}>Logout</h2>
     </div>
   );
 
   return (
     <>
       <nav className="">
-        <div className="fixed  bg-white container py-3 px-5 md:py-2 md:px-5 z-10">
+        <div className="fixed bg-white container py-3 px-5 md:py-2 md:px-5 z-10">
           <div className="flex justify-between items-center">
             {/* logo section */}
             <div>
@@ -73,18 +81,16 @@ const Navbar = () => {
             {/* desktop navlinks section */}
             <div className="hidden md:block">
               <ul className="flex items-center gap-8">
-                {links.map(({ id, name, link }) => {
-                  return (
-                    <li key={id} className="cursor-pointer py-4">
-                      <a
-                        href={link}
-                        className="text-lg font-medium hover:text-sky-600 py-2 hover:border-b-2 hover:border-sky-900 transition-all duration-300"
-                      >
-                        {name}
-                      </a>
-                    </li>
-                  );
-                })}
+                {links.map(({ id, name, link }) => (
+                  <li key={id} className="cursor-pointer py-4">
+                    <a
+                      href={link}
+                      className="text-lg font-medium hover:text-sky-600 py-2 hover:border-b-2 hover:border-sky-900 transition-all duration-300"
+                    >
+                      {name}
+                    </a>
+                  </li>
+                ))}
               </ul>
             </div>
 
@@ -96,7 +102,7 @@ const Navbar = () => {
 
             {/* mobile view */}
             <div className="md:hidden">
-              {showMenu? (
+              {showMenu ? (
                 <HiMenuAlt1
                   onClick={toggleMenu}
                   className="cursor-pointer text-2xl md:hidden"
