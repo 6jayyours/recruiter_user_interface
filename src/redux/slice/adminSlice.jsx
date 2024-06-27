@@ -16,7 +16,7 @@ export const listUsers = createAsyncThunk(
           Authorization: `Bearer ${token}`,
         },
       });
-      return rejectWithValue(response.data);
+      return response.data;
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -36,7 +36,7 @@ export const getAllJobs = createAsyncThunk(
           Authorization: `Bearer ${token}`,
         },
       });
-      return rejectWithValue(response.data);
+      return response.data;
     } catch (error) {
       return rejectWithValue(error.response ? error.response.data : error.message);
     }

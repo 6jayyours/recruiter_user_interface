@@ -10,7 +10,7 @@ const Userslist = () => {
     const formData = { role: "USER" };
     dispatch(listUsers(formData))
       .then((response) => {
-        console.log(response)
+        console.log(response.payload)
         setCandidates(response.payload);
       })
       .catch((error) => {});

@@ -9,7 +9,6 @@ const JobList = () => {
   useEffect(() => {
     dispatch(getAllJobs())
       .then((response) => {
-        console.log(response.payload);
         setAllJobs(response.payload);
       })
       .catch((error) => {
@@ -47,7 +46,7 @@ const JobList = () => {
                 <td className="py-3 px-4">{job.jobTitle}</td>
                 <td className="py-3 px-4">{new Date(job.postedTime).toLocaleDateString()}</td>
                 <td className="py-3 px-4">
-                  <span className={`inline-block px-2 py-1 rounded ${job.status === 'Active' ? 'bg-green-500' : 'bg-gray-400'} text-white`}>
+                  <span className={`inline-block px-2 py-1 rounded ${job.status === 'open' ? 'bg-green-500' : 'bg-gray-400'} text-white`}>
                     {job.status}
                   </span>
                 </td>
