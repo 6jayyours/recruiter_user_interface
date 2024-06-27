@@ -35,7 +35,7 @@ const HirerSidebar = () => {
             <h2 className="text-lg font-semibold">My Jobs</h2>
           </Link>
           <Link
-            to="/recruiter/applications"
+            to="/recruiter/myapplications"
             className="flex items-center mb-4 hover:bg-gray-600 transition-all duration-300 cursor-pointer p-2 rounded"
           >
             <RiMailSendLine className="mr-2" />

@@ -22,6 +22,10 @@ import HirerDashboard from "../pages/hirerpages/HirerDashboard.jsx";
 import HirerProfile from "../components/recruiter/HirerProfile.jsx";
 import NotFound from "../pages/commonpages/NotFound.jsx";
 import Ide from "../pages/userpages/Ide.jsx";
+import Chat from "../pages/Chat/Chat.jsx";
+import PostJob from "../components/recruiter/PostJob.jsx";
+import MyApplications from "../components/recruiter/MyApplications.jsx";
+import MyJobs from "../components/recruiter/MyJobs.jsx";
 
 const router = createBrowserRouter([
   { path: "/login", element: <Login /> },
@@ -123,18 +127,52 @@ const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
+      {
+        path: "message",
+        element: <Chat />,
+      },
     ],
   },
   {
     path: "/recruiter",
     element: <HirerDashboard />,
     children: [
-      { path: "profile", element: <ProtectedRoute requiredRole="RECRUITER"><HirerProfile /></ProtectedRoute> },
+      {
+        path: "profile",
+        element: (
+          <ProtectedRoute requiredRole="RECRUITER">
+            <HirerProfile />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "myjobs",
+        element: (
+          <ProtectedRoute requiredRole="RECRUITER">
+            <MyJobs />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "myapplications",
+        element: (
+          <ProtectedRoute requiredRole="RECRUITER">
+            <MyApplications />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "postjob",
+        element: (
+          <ProtectedRoute requiredRole="RECRUITER">
+            <PostJob />
+          </ProtectedRoute>
+        ),
+      },
     ],
   },
   { path: "/noauthorization", element: <NotAuthorized /> },
   { path: "/pagenotfound", element: <NotFound /> },
-
 ]);
 
 export default router;

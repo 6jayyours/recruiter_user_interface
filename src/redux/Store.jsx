@@ -4,6 +4,7 @@ import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage'; // defaults to localStorage for web
 import authReducer from "./slice/authSlice";
 import adminSlice from './slice/adminSlice';
+import jobSlice from './slice/jobSlice';
 
 // Create a persist config
 const persistConfig = {
@@ -15,6 +16,7 @@ const persistConfig = {
 const rootReducer = combineReducers({
   auth: authReducer,
   admin: adminSlice,
+  jobs: jobSlice
 });
 
 // Apply persistReducer middleware
