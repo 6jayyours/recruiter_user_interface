@@ -1,6 +1,6 @@
 import axios from "axios";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { AUTH_URL } from "../../constants/Url";
+import { AUTH_URL, USER_SERVICE } from "../../constants/Url";
 
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
@@ -43,6 +43,26 @@ export const verifyOTP = createAsyncThunk(
   async (formData, { rejectWithValue }) => {
     try {
       const response = await axios.post(`${AUTH_URL}verifyOtp`, formData);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const getUser = createAsyncThunk(
+  "auth/getUser",
+  async (id, { getState, rejectWithValue }) => {
+    try {
+      const state = getState();
+      const token = state.auth.token;
+      
+      const response = await axios.get(`${USER_SERVICE}candidate`, {
+        params:{id},
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       return response.data;
     } catch (error) {
       return rejectWithValue(error.message);

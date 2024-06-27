@@ -1,18 +1,55 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { UserLinks, HirerLinks } from "../../constants/NavLinks";
 import { HiMenuAlt1, HiMenuAlt3 } from "react-icons/hi";
 import MobileMenu from "./section/MobileMenu";
 import navLogo from "../../assets/logo.png";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { FaMessage } from "react-icons/fa6";
+import { getUser } from "../../redux/slice/authSlice";
 
 const Navbar = () => {
   const links = UserLinks;
+  const dispatch = useDispatch();
+  const authenticated = useSelector((state) => state.auth.isAuthenticated);
+  const id = useSelector((state) => state.auth.id);
+  const role = useSelector((state) => state.auth.role)
+  console.log(id,role)
+  const [profileImage, setProfileImage] = useState(null);
+
+
+  useEffect(() => {
+      dispatch(getUser(id))
+        .then((response) => {
+          console.log(response)
+        })
+        .catch((error) => {
+          console.error("Failed to fetch user:", error);
+        });
+  }, [dispatch]);
 
   const [showMenu, setShowMenu] = useState(false);
 
   const toggleMenu = () => {
     setShowMenu(!showMenu);
   };
+
+  // Conditionally render the "Get Started" button based on authentication status
+  const getStartedButton =!authenticated && (
+    <Link to={"/login"}>
+      <button className="hidden md:block bg-indigo-700 text-white hover:bg-sky-950 duration-300 rounded-lg py-2 px-4">
+        Get Started
+      </button>
+    </Link>
+  );
+
+  const userDetailsAndIcon = authenticated && (
+    <div className="flex items-center space-x-4">
+      <FaMessage className="cursor-pointer text-2xl" /> {/* Replace FaBell with your actual message icon component */}
+      <img src="" alt="User Profile Picture" className="w-12 h-12 rounded-full" />
+      <span className="font-semibold">Arjun</span>
+    </div>
+  );
 
   return (
     <>
@@ -47,17 +84,15 @@ const Navbar = () => {
               </ul>
             </div>
 
-            <div>
-              <Link to={"/login"}>
-                <button className="hidden md:block bg-indigo-700 text-white hover:bg-sky-950 duration-300 rounded-lg py-2 px-4">
-                  Get Started
-                </button>
-              </Link>
-            </div>
+            {/* Conditionally render the "Get Started" button */}
+            {getStartedButton}
+
+            {/* Conditionally render user details and message icon */}
+            {userDetailsAndIcon}
 
             {/* mobile view */}
             <div className="md:hidden">
-              {showMenu ? (
+              {showMenu? (
                 <HiMenuAlt1
                   onClick={toggleMenu}
                   className="cursor-pointer text-2xl md:hidden"

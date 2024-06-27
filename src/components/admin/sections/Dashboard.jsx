@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
 import { useDispatch } from 'react-redux';
-import { listUsers } from '../../../redux/slice/adminSlice';
+import { getAllJobs, listUsers } from '../../../redux/slice/adminSlice';
 
 // Register necessary components for Chart.js
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
@@ -11,6 +11,7 @@ const Dashboard = () => {
   const dispatch = useDispatch();
   const [candidates, setCandidates] = useState([]);
   const [recruiters, setRecruiters] = useState([]);
+  const [jobs, setJobs] = useState([]);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -20,6 +21,9 @@ const Dashboard = () => {
 
         const recruiterResponse = await dispatch(listUsers({ role: "RECRUITER" }));
         setRecruiters(recruiterResponse.payload);
+
+        const jobResponse = await dispatch(getAllJobs());
+        setJobs(jobResponse.payload);
       } catch (error) {
         console.error("Error fetching users:", error);
       }
@@ -116,7 +120,7 @@ const Dashboard = () => {
           <div className="bg-white shadow-md rounded-lg p-6 flex justify-between items-center">
             <div>
               <h3 className="text-lg font-semibold">Total Jobs</h3>
-              <p className="text-3xl font-bold">234</p>
+              <p className="text-3xl font-bold">{jobs.length}</p>
             </div>
             <div className="text-indigo-500">
               <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
