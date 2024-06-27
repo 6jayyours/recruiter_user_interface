@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const Message = () => {
+const Message = ({handleSend}) => {
   const [messages, setMessages] = useState([
     {
       id: 1,
@@ -25,30 +25,7 @@ const Message = () => {
   const [selectedAudio, setSelectedAudio] = useState(null);
   const [selectedDocument, setSelectedDocument] = useState(null);
 
-  const handleSendMessage = () => {
-    if (
-      newMessage.trim() !== "" ||
-      selectedFile ||
-      selectedAudio ||
-      selectedDocument
-    ) {
-      const newMessageObj = {
-        id: messages.length + 1,
-        text: newMessage,
-        sender: "Me",
-        image: "https://via.placeholder.com/40",
-        timestamp: new Date(),
-        file: selectedFile,
-        audio: selectedAudio,
-        document: selectedDocument,
-      };
-      setMessages([...messages, newMessageObj]);
-      setNewMessage("");
-      setSelectedFile(null);
-      setSelectedAudio(null);
-      setSelectedDocument(null);
-    }
-  };
+
 
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
@@ -169,7 +146,7 @@ const Message = () => {
           📄
         </label>
         <button
-          onClick={handleSendMessage}
+          onClick={handleSend}
           className="p-2 bg-blue-500 text-white rounded-r-lg hover:bg-blue-600"
         >
           Send

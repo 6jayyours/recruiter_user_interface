@@ -41,6 +41,8 @@ const router = createBrowserRouter([
       { path: "/contact", element: <Contact /> },
       { path: "/jobs", element: <Jobs /> },
       { path: "/compiler", element: <Ide /> },
+      { path: "/message/user", element: <ProtectedRoute requiredRole="USER"><Chat /></ProtectedRoute>  },
+      { path: "/message/recruiter", element: <ProtectedRoute requiredRole="RECRUITER"><Chat /></ProtectedRoute>  },
     ],
   },
 
@@ -126,10 +128,6 @@ const router = createBrowserRouter([
             <Candidates />
           </ProtectedRoute>
         ),
-      },
-      {
-        path: "message",
-        element: <Chat />,
       },
     ],
   },

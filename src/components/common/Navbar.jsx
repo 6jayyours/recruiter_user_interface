@@ -14,6 +14,8 @@ const Navbar = () => {
   const id = useSelector((state) => state.auth.id);
   const role = useSelector((state) => state.auth.role);
 
+  const path = role === "USER" ? "/message/user" : "/message/recruiter";
+
   const links = role === "RECRUITER" ? HirerLinks : UserLinks; 
 
   const [profileImage, setProfileImage] = useState(null);
@@ -56,7 +58,8 @@ const Navbar = () => {
 
   const userDetailsAndIcon = authenticated && (
     <div className="flex items-center space-x-4">
-      <FaMessage className="cursor-pointer text-2xl mr-4 text-indigo-800" /> {/* Replace FaBell with your actual message icon component */}
+      
+      <Link to={path}><FaMessage className="cursor-pointer text-2xl mr-4 text-indigo-800" /></Link> {/* Replace FaBell with your actual message icon component */}
       <img src={profileImage} alt="User Profile" className="w-12 h-12 rounded-full" />
       <span className="font-semibold">{userName}</span>
       <h2 className="cursor-pointer" onClick={handleLogout}>Logout</h2>
