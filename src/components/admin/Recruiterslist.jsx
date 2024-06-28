@@ -1,11 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { listUsers } from "../../redux/slice/adminSlice";
 import ImageModal from "./sections/ImageModal";
 
 const Recruiterslist = () => {
   const dispatch = useDispatch();
   const [recruiters, setRecruiters] = useState([]);
+  const [filteredRecruiters, setFilteredRecruiters] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+  const [documentFilter, setDocumentFilter] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(6);
   const [showModal, setShowModal] = useState(false);
   const [selectedImageUrl, setSelectedImageUrl] = useState('');
 
@@ -23,16 +29,91 @@ const Recruiterslist = () => {
     const formData = { role: "RECRUITER" };
     dispatch(listUsers(formData))
       .then((response) => {
-        console.log(response);
         setRecruiters(response.payload);
+        setFilteredRecruiters(response.payload);
       })
       .catch((error) => {});
   }, [dispatch]);
+
+  useEffect(() => {
+    let filtered = recruiters;
+
+    if (searchTerm) {
+      filtered = filtered.filter((recruiter) =>
+        `${recruiter.firstName} ${recruiter.lastName}`
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase())
+      );
+    }
+
+    if (statusFilter) {
+      filtered = filtered.filter((recruiter) =>
+        statusFilter === "active" ? recruiter.isActive : !recruiter.isActive
+      );
+    }
+
+    if (documentFilter) {
+      filtered = filtered.filter((recruiter) =>
+        documentFilter === "available"
+          ? recruiter.idImageUrl
+          : !recruiter.idImageUrl
+      );
+    }
+
+    setFilteredRecruiters(filtered);
+  }, [searchTerm, statusFilter, documentFilter, recruiters]);
+
+  const totalPages = Math.ceil(filteredRecruiters.length / itemsPerPage);
+  const indexOfLastCandidate = currentPage * itemsPerPage;
+  const indexOfFirstCandidate = indexOfLastCandidate - itemsPerPage;
+  const currentRecruiters = filteredRecruiters.slice(
+    indexOfFirstCandidate,
+    indexOfLastCandidate
+  );
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
 
   return (
     <div className="p-4">
       <div className="mb-4">
         <h2 className="text-xl font-bold">Dashboard / Recruiter</h2>
+      </div>
+      <div className="mb-4 flex space-x-4">
+        <input
+          type="text"
+          placeholder="Search by name"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full p-2 border border-gray-300 rounded"
+        />
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          className="p-2 border border-gray-300 rounded"
+        >
+          <option value="">All Statuses</option>
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+        </select>
+        <select
+          value={documentFilter}
+          onChange={(e) => setDocumentFilter(e.target.value)}
+          className="p-2 border border-gray-300 rounded"
+        >
+          <option value="">All Documents</option>
+          <option value="available">Document Available</option>
+          <option value="notAvailable">No Document</option>
+        </select>
       </div>
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white rounded-lg overflow-hidden shadow-md">
@@ -46,7 +127,7 @@ const Recruiterslist = () => {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
-            {recruiters.map((recruiter) => (
+            {currentRecruiters.map((recruiter) => (
               <tr key={recruiter.id}>
                 <td className="py-3 px-4 flex items-center">
                   <img
@@ -69,18 +150,11 @@ const Recruiterslist = () => {
                 </td>
                 <td className="py-3 px-4">
                   <img
-                    className="h-14 w-auto"
+                    className="h-14 w-auto cursor-pointer"
                     src={recruiter.idImageUrl}
                     alt="Image not available"
                     onClick={() => handleImageClick(recruiter.idImageUrl)}
                   />
-                  {showModal && (
-                    <ImageModal
-                      showModal={showModal}
-                      imageUrl={selectedImageUrl}
-                      onClose={handleCloseModal}
-                    />
-                  )}
                 </td>
                 <td className="py-3 px-4">
                   <button
@@ -97,7 +171,33 @@ const Recruiterslist = () => {
             ))}
           </tbody>
         </table>
+        <div className="flex justify-between items-center mt-4">
+          <button
+            onClick={handlePrevPage}
+            disabled={currentPage === 1}
+            className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
+          >
+            Previous
+          </button>
+          <span>
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            onClick={handleNextPage}
+            disabled={currentPage === totalPages}
+            className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
       </div>
+      {showModal && (
+        <ImageModal
+          showModal={showModal}
+          imageUrl={selectedImageUrl}
+          onClose={handleCloseModal}
+        />
+      )}
     </div>
   );
 };

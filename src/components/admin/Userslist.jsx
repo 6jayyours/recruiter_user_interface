@@ -4,22 +4,102 @@ import { listUsers } from "../../redux/slice/adminSlice";
 
 const Userslist = () => {
   const dispatch = useDispatch();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+  const [subscriptionFilter, setSubscriptionFilter] = useState("");
+  const [filteredCandidates, setFilteredCandidates] = useState([]);
   const [candidates, setCandidates] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(6); // Adjust as needed
 
   useEffect(() => {
     const formData = { role: "USER" };
     dispatch(listUsers(formData))
       .then((response) => {
-        console.log(response.payload)
+        console.log(response.payload);
         setCandidates(response.payload);
+        setFilteredCandidates(response.payload);
       })
       .catch((error) => {});
   }, [dispatch]);
+
+  useEffect(() => {
+    let filtered = candidates;
+
+    if (searchTerm) {
+      filtered = filtered.filter((user) =>
+        `${user.firstName} ${user.lastName}`
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase())
+      );
+    }
+
+    if (statusFilter) {
+      filtered = filtered.filter((user) =>
+        statusFilter === "active" ? user.status : !user.status
+      );
+    }
+
+    if (subscriptionFilter) {
+      filtered = filtered.filter((user) =>
+        subscriptionFilter === "subscribed" ? user.subscription : !user.subscription
+      );
+    }
+
+    setFilteredCandidates(filtered);
+    setCurrentPage(1); // Reset to first page on filter change
+  }, [searchTerm, statusFilter, subscriptionFilter, candidates]);
+
+  // Pagination logic
+  const indexOfLastCandidate = currentPage * itemsPerPage;
+  const indexOfFirstCandidate = indexOfLastCandidate - itemsPerPage;
+  const currentCandidates = filteredCandidates.slice(indexOfFirstCandidate, indexOfLastCandidate);
+
+  const totalPages = Math.ceil(filteredCandidates.length / itemsPerPage);
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
 
   return (
     <div className="p-4">
       <div className="mb-4">
         <h2 className="text-xl font-bold">Dashboard / Job Seekers</h2>
+      </div>
+      <div className="mb-4 flex space-x-4">
+        <input
+          type="text"
+          placeholder="Search by name"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full p-2 border border-gray-300 rounded"
+        />
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          className="p-2 border border-gray-300 rounded"
+        >
+          <option value="">All Statuses</option>
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+        </select>
+        <select
+          value={subscriptionFilter}
+          onChange={(e) => setSubscriptionFilter(e.target.value)}
+          className="p-2 border border-gray-300 rounded"
+        >
+          <option value="">All Subscriptions</option>
+          <option value="subscribed">Subscribed</option>
+          <option value="free">Free</option>
+        </select>
       </div>
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white rounded-lg overflow-hidden shadow-md">
@@ -33,7 +113,7 @@ const Userslist = () => {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
-            {candidates.map((user) => (
+            {currentCandidates.map((user) => (
               <tr key={user.id}>
                 <td className="py-3 px-4 flex items-center">
                   <img
@@ -48,18 +128,16 @@ const Userslist = () => {
                 <td className="py-3 px-4">
                   <span
                     className={`inline-block px-2 py-1 rounded ${
-                      user.isActive ? "bg-green-500" : "bg-gray-400"
+                      user.status ? "bg-green-500" : "bg-gray-400"
                     } text-white`}
                   >
-                    {user.isActive ? "Active" : "Inactive"}
+                    {user.status ? "Active" : "Inactive"}
                   </span>
                 </td>
                 <td className="py-3 px-4">
                   <span
                     className={`inline-block px-2 py-1 rounded ${
-                      user.subscription === "Premium"
-                        ? "bg-blue-500"
-                        : "bg-yellow-500"
+                      user.subscription ? "bg-blue-500" : "bg-yellow-500"
                     } text-white`}
                   >
                     {user.subscription ? "Subscribed" : "Free"}
@@ -68,18 +146,37 @@ const Userslist = () => {
                 <td className="py-3 px-4">
                   <button
                     className={`py-1 px-3 rounded ${
-                      user.isActive
+                      user.status
                         ? "bg-red-500 hover:bg-red-600"
                         : "bg-green-500 hover:bg-green-600"
                     } text-white`}
                   >
-                    {user.isActive ? "Block" : "Unblock"}
+                    {user.status ? "Block" : "Unblock"}
                   </button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+        <div className="flex justify-between items-center mt-4">
+          <button
+            onClick={handlePrevPage}
+            disabled={currentPage === 1}
+            className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
+          >
+            Previous
+          </button>
+          <span>
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            onClick={handleNextPage}
+            disabled={currentPage === totalPages}
+            className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
       </div>
     </div>
   );
