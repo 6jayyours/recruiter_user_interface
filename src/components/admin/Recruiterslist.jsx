@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { listUsers } from "../../redux/slice/adminSlice";
+import { activateUser, listUsers } from "../../redux/slice/adminSlice";
 import ImageModal from "./sections/ImageModal";
+import toast from "react-hot-toast";
 
 const Recruiterslist = () => {
   const dispatch = useDispatch();
@@ -13,7 +14,7 @@ const Recruiterslist = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(6);
   const [showModal, setShowModal] = useState(false);
-  const [selectedImageUrl, setSelectedImageUrl] = useState('');
+  const [selectedImageUrl, setSelectedImageUrl] = useState("");
 
   const handleImageClick = (imageUrl) => {
     setSelectedImageUrl(imageUrl);
@@ -22,7 +23,7 @@ const Recruiterslist = () => {
 
   const handleCloseModal = () => {
     setShowModal(false);
-    setSelectedImageUrl('');
+    setSelectedImageUrl("");
   };
 
   useEffect(() => {
@@ -48,15 +49,15 @@ const Recruiterslist = () => {
 
     if (statusFilter) {
       filtered = filtered.filter((recruiter) =>
-        statusFilter === "active" ? recruiter.isActive : !recruiter.isActive
+        statusFilter === "active" ? recruiter.status : !recruiter.status
       );
     }
 
     if (documentFilter) {
       filtered = filtered.filter((recruiter) =>
         documentFilter === "available"
-          ? recruiter.idImageUrl
-          : !recruiter.idImageUrl
+          ? recruiter.idImageUrl === null
+          : recruiter.idImageUrl !== null
       );
     }
 
@@ -83,6 +84,23 @@ const Recruiterslist = () => {
       setCurrentPage(currentPage - 1);
     }
   };
+
+  function handleUserStatus(id) {
+    dispatch(activateUser(id))
+      .then((response) => {
+        toast.success("User status changed.");
+        setFilteredRecruiters((prevCandidates) =>
+          prevCandidates.map((candidate) =>
+            candidate.id === id
+              ? { ...candidate, status: !candidate.status }
+              : candidate
+          )
+        );
+      })
+      .catch((error) => {
+        console.error("Error updating user status:", error);
+      });
+  }
 
   return (
     <div className="p-4">
@@ -143,10 +161,10 @@ const Recruiterslist = () => {
                 <td className="py-3 px-4">
                   <span
                     className={`inline-block px-2 py-1 rounded ${
-                      recruiter.isActive ? "bg-green-500" : "bg-gray-400"
+                      recruiter.status ? "bg-green-500" : "bg-gray-400"
                     } text-white`}
                   >
-                    {recruiter.isActive ? "Active" : "Inactive"}
+                    {recruiter.status ? "Active" : "Inactive"}
                   </span>
                 </td>
                 <td className="py-3 px-4">
@@ -159,13 +177,14 @@ const Recruiterslist = () => {
                 </td>
                 <td className="py-3 px-4">
                   <button
+                    onClick={() => handleUserStatus(recruiter.id)}
                     className={`py-1 px-3 rounded ${
-                      recruiter.isActive
+                      recruiter.status
                         ? "bg-red-500 hover:bg-red-600"
                         : "bg-green-500 hover:bg-green-600"
                     } text-white`}
                   >
-                    {recruiter.isActive ? "Block" : "Unblock"}
+                    {recruiter.status ? "Block" : "Unblock"}
                   </button>
                 </td>
               </tr>

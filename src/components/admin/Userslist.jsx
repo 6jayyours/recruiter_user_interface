@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { listUsers } from "../../redux/slice/adminSlice";
+import { activateUser, listUsers } from "../../redux/slice/adminSlice";
+import toast from "react-hot-toast";
 
 const Userslist = () => {
   const dispatch = useDispatch();
@@ -41,7 +42,9 @@ const Userslist = () => {
 
     if (subscriptionFilter) {
       filtered = filtered.filter((user) =>
-        subscriptionFilter === "subscribed" ? user.subscription : !user.subscription
+        subscriptionFilter === "subscribed"
+          ? user.subscription
+          : !user.subscription
       );
     }
 
@@ -52,7 +55,10 @@ const Userslist = () => {
   // Pagination logic
   const indexOfLastCandidate = currentPage * itemsPerPage;
   const indexOfFirstCandidate = indexOfLastCandidate - itemsPerPage;
-  const currentCandidates = filteredCandidates.slice(indexOfFirstCandidate, indexOfLastCandidate);
+  const currentCandidates = filteredCandidates.slice(
+    indexOfFirstCandidate,
+    indexOfLastCandidate
+  );
 
   const totalPages = Math.ceil(filteredCandidates.length / itemsPerPage);
 
@@ -67,6 +73,23 @@ const Userslist = () => {
       setCurrentPage(currentPage - 1);
     }
   };
+
+  function handleUserStatus(id) {
+    dispatch(activateUser(id))
+      .then((response) => {
+        toast.success("User status changed.");
+        setFilteredCandidates((prevCandidates) =>
+          prevCandidates.map((candidate) =>
+            candidate.id === id
+              ? { ...candidate, status: !candidate.status }
+              : candidate
+          )
+        );
+      })
+      .catch((error) => {
+        console.error("Error updating user status:", error);
+      });
+  }
 
   return (
     <div className="p-4">
@@ -144,6 +167,7 @@ const Userslist = () => {
                 </td>
                 <td className="py-3 px-4">
                   <button
+                    onClick={() => handleUserStatus(user.id)}
                     className={`py-1 px-3 rounded ${
                       user.status
                         ? "bg-red-500 hover:bg-red-600"

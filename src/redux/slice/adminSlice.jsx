@@ -1,6 +1,6 @@
 import axios from "axios";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { ADMIN_URL, AUTH_URL, USER_SERVICE } from "../../constants/Url";
+import { ADMIN_URL, USER_SERVICE } from "../../constants/Url";
 
 export const listUsers = createAsyncThunk(
   "admin/listUsers",
@@ -42,6 +42,27 @@ export const getAllJobs = createAsyncThunk(
     }
   }
 );
+
+export const activateUser = createAsyncThunk(
+  'admin/activateUser',
+  async (id , thunkAPI) => {
+    const { rejectWithValue, getState } = thunkAPI;
+    try {
+      // Get the token from the auth state
+      const state = getState();
+      const token = state.auth.token;
+      const response = await axios.put(`${ADMIN_URL}activate/${id}`, {},{
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response ? error.response.data : error.message);
+    }
+  }
+);
+
 
 export const profilePicture = createAsyncThunk(
   "admin/profilePicture",
