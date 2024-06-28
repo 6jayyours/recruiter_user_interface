@@ -4,8 +4,16 @@ import navLogo from '../../../assets/logo.png'
 import { PiSuitcaseSimpleFill } from 'react-icons/pi'
 import { MdLibraryAdd, MdLogout, MdManageAccounts } from 'react-icons/md'
 import { RiMailSendLine } from 'react-icons/ri'
+import { logoutUser } from '../../../redux/slice/authSlice'
+import { useDispatch } from 'react-redux'
 
 const HirerSidebar = () => {
+  const dispatch = useDispatch();
+
+    const handleLogout = () => {
+        // Dispatch logout action
+        dispatch(logoutUser());
+    };
   return (
     <div className="h-screen bg-gray-800 text-white fixed w-64 flex flex-col">
       <div className="flex items-center justify-center py-6">
@@ -51,13 +59,13 @@ const HirerSidebar = () => {
         </div>
       </div>
       <div className="mt-auto px-4 py-2">
-        <Link
-          to="/logout" // Replace with your logout route or function
+        <button
+          onClick={handleLogout}
           className="flex items-center mb-4 hover:bg-gray-600 transition-all duration-300 cursor-pointer p-2 rounded"
         >
           <MdLogout  className="mr-2" />
           <h2 className="text-lg font-semibold">Logout</h2>
-        </Link>
+        </button>
       </div>
     </div>
   )
