@@ -61,6 +61,7 @@ const Recruiterslist = () => {
     }
 
     setFilteredRecruiters(filtered);
+    setCurrentPage(1);
   }, [searchTerm, statusFilter, documentFilter, recruiters]);
 
   const totalPages = Math.ceil(filteredRecruiters.length / itemsPerPage);

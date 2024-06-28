@@ -6,7 +6,8 @@ import navLogo from "../../assets/logo.png";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { FaMessage } from "react-icons/fa6";
-import { getUser, logoutUser } from "../../redux/slice/authSlice";
+import { getUser } from "../../redux/slice/authSlice";
+import DropDownProfile from "./DropDownProfile";
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -16,15 +17,11 @@ const Navbar = () => {
 
   const path = role === "USER" ? "/message/user" : "/message/recruiter";
 
-  const links = role === "RECRUITER" ? HirerLinks : UserLinks; 
+  const links = role === "RECRUITER" ? HirerLinks : UserLinks;
 
   const [profileImage, setProfileImage] = useState(null);
   const [userName, setUsername] = useState(null);
-
-  const handleLogout = () => {
-    // Dispatch logout action
-    dispatch(logoutUser());
-  };
+  const [openDrop, setOpenDrop] = useState(false);
 
   useEffect(() => {
     if (authenticated) {
@@ -58,11 +55,18 @@ const Navbar = () => {
 
   const userDetailsAndIcon = authenticated && (
     <div className="flex items-center space-x-4">
-      
-      <Link to={path}><FaMessage className="cursor-pointer text-2xl mr-4 text-indigo-800" /></Link> {/* Replace FaBell with your actual message icon component */}
-      <img src={profileImage} alt="User Profile" className="w-12 h-12 rounded-full" />
+      <Link to={path}>
+        <FaMessage className="cursor-pointer text-2xl mr-4 text-indigo-800" />
+      </Link>{" "}
+      {/* Replace FaBell with your actual message icon component */}
       <span className="font-semibold">{userName}</span>
-      <h2 className="cursor-pointer" onClick={handleLogout}>Logout</h2>
+      <img
+        src={profileImage}
+        alt="User Profile"
+        className="w-12 h-12 rounded-full"
+        onClick={() => setOpenDrop((prev) => !prev)}
+      />
+      {openDrop && <DropDownProfile />}
     </div>
   );
 
