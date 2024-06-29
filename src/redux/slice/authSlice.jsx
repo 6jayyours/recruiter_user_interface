@@ -14,6 +14,27 @@ export const loginUser = createAsyncThunk(
   }
 );
 
+export const listCandidates = createAsyncThunk(
+  "admin/listCandidates",
+  async (formData, thunkAPI) => {
+    const { rejectWithValue, getState } = thunkAPI;
+    try {
+      // Get the token from the auth state
+      const state = getState();
+      const token = state.auth.token;
+      const response = await axios.get(`${USER_SERVICE}users`, {
+        params: formData,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 export const registerUser = createAsyncThunk(
   "auth/registerUser",
   async (formData, { rejectWithValue }) => {
