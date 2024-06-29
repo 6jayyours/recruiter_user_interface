@@ -13,6 +13,7 @@ const JobList = () => {
   useEffect(() => {
     dispatch(getAllJobs())
       .then((response) => {
+        console.log(response.payload)
         setAllJobs(response.payload);
       })
       .catch((error) => {
@@ -86,7 +87,7 @@ const JobList = () => {
                     className="w-10 h-10 rounded-full"
                   />
                 </td>
-                <td className="py-3 px-4">{job.user}</td>
+                <td className="py-3 px-4">{job.posted}</td>
                 <td className="py-3 px-4">{job.jobTitle}</td>
                 <td className="py-3 px-4">{new Date(job.postedTime).toLocaleDateString()}</td>
                 <td className="py-3 px-4">

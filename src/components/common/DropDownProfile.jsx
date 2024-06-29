@@ -19,10 +19,10 @@ const DropDownProfile = () => {
         <div className='flex flex-col absolute w-[100px] bg-white items-center p-[15px] top-[4.2rem] right-[0rem] border border-gray-300 rounded shadow-xl'>
             <ul className='flex flex-col gap-4'>
                 <li>
-                    <Link to="/recruiter/profile" className="text-black hover:text-blue-600">Profile</Link>
+                    <Link to={profilePath} className="text-black hover:text-blue-600">Profile</Link>
                 </li>
                 <li>
-                    <Link to="/userdashboard" className="text-black hover:text-blue-600">Dashboard</Link>
+                    <Link to={dashPath} className="text-black hover:text-blue-600">Dashboard</Link>
                 </li>
                 <li className='cursor-pointer text-red-500 hover:text-red-600' onClick={handleLogout}>Logout</li>
             </ul>
