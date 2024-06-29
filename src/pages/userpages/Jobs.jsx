@@ -18,6 +18,7 @@ const Jobs = () => {
   useEffect(() => {
     setIsLoading(true);
     dispatch(getAllJobs())
+    
       .then(response => {
         console.log(response.payload)
         setJobs(response.payload);
@@ -34,8 +35,8 @@ const Jobs = () => {
     <div>
       <Banner />
       <div className="bg-white grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 px-4 py-12">
-        <div className="">
-          <JobList/>
+        <div className="min-h-96">
+          <JobList jobs={jobs}/>
         </div>
         
       </div>

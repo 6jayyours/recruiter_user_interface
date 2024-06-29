@@ -74,7 +74,7 @@ const PostJob = () => {
       description,
       requirements,
       responsibilities,
-      userId
+      user:userId
     };
 
     dispatch(createJob(jobData))

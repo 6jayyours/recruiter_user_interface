@@ -1,6 +1,6 @@
 import axios from "axios";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import {JOBS_SERVICE } from "../../constants/Url";
+import {JOBS_SERVICE, PUBLIC_JOBS } from "../../constants/Url";
 
 export const createJob = createAsyncThunk(
   "admin/createJob",
@@ -25,15 +25,9 @@ export const createJob = createAsyncThunk(
 export const getAllJobs = createAsyncThunk(
   'admin/getAllJobs',
   async (_, thunkAPI) => {
-    const { rejectWithValue, getState } = thunkAPI;
+    const { rejectWithValue} = thunkAPI;
     try {
-      // Get the token from the auth state
-      const state = getState();
-      const token = state.auth.token;
-      const response = await axios.get(`${JOBS_SERVICE}getAllJobs`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      const response = await axios.get(`${PUBLIC_JOBS}getAllJobs`, {
       });
       return response.data;
     } catch (error) {
