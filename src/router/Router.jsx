@@ -26,6 +26,7 @@ import Chat from "../pages/Chat/Chat.jsx";
 import PostJob from "../components/recruiter/PostJob.jsx";
 import MyApplications from "../components/recruiter/MyApplications.jsx";
 import MyJobs from "../components/recruiter/MyJobs.jsx";
+import SingleJob from "../pages/SingleJob.jsx";
 
 const router = createBrowserRouter([
   { path: "/login", element: <Login /> },
@@ -41,8 +42,30 @@ const router = createBrowserRouter([
       { path: "/contact", element: <Contact /> },
       { path: "/jobs", element: <Jobs /> },
       { path: "/compiler", element: <Ide /> },
-      { path: "/message/user", element: <ProtectedRoute requiredRole="USER"><Chat /></ProtectedRoute>  },
-      { path: "/message/recruiter", element: <ProtectedRoute requiredRole="RECRUITER"><Chat /></ProtectedRoute>  },
+      {
+        path: "/jobdetail",
+        element: (
+          <ProtectedRoute requiredRole="USER">
+            <SingleJob />{" "}
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/message/user",
+        element: (
+          <ProtectedRoute requiredRole="USER">
+            <Chat />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/message/recruiter",
+        element: (
+          <ProtectedRoute requiredRole="RECRUITER">
+            <Chat />
+          </ProtectedRoute>
+        ),
+      },
     ],
   },
 

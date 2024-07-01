@@ -1,6 +1,7 @@
 import React from "react";
 import { FaRegClock } from "react-icons/fa";
 import { PiMapPin } from "react-icons/pi";
+import { Link } from "react-router-dom";
 
 const formatDate = (dateString) => {
   const options = { day: "numeric", month: "long", year: "numeric" };
@@ -42,9 +43,11 @@ const JobCard = ({ company, title, type, date, location, salary }) => {
       </div>
       {/* 4th div */}
       <div className="md:ml-6 mt-4 md:mt-0 ">
-        <button className="rounded-md bg-indigo-600 hover:bg-indigo-500 border-indigo-600 hover:border-indigo-500 text-white px-4 py-2 transition-all duration-300">
-          Apply
-        </button>
+        <Link to={"/jobdetail"}>
+          <button className="rounded-md bg-indigo-600 hover:bg-indigo-500 border-indigo-600 hover:border-indigo-500 text-white px-4 py-2 transition-all duration-300">
+            Apply
+          </button>
+        </Link>
       </div>
     </div>
   );
