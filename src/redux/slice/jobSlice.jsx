@@ -57,6 +57,26 @@ export const getMyJob = createAsyncThunk(
   }
 );
 
+export const getJob = createAsyncThunk(
+  'admin/getJob',
+  async (id, thunkAPI) => {
+    const { rejectWithValue, getState } = thunkAPI;
+    try {
+      // Get the token from the auth state
+      const state = getState();
+      const token = state.auth.token;
+      const response = await axios.get(`${JOBS_SERVICE}getJob`, {
+        params: {id },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return rejectWithValue(response.data);
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
 
 
 

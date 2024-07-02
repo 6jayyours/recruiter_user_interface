@@ -7,6 +7,7 @@ const JobList = ({jobs}) => {
       {jobs.map(job => (
         <JobCard
           key={job.id}
+          id={job.id}
           company={job.company}
           title={job.jobTitle}
           type={job.jobType}
