@@ -1,7 +1,64 @@
 import React from "react";
 import { FaRegCheckCircle } from "react-icons/fa";
+import { useSelector } from "react-redux";
 
 const Pricing = () => {
+  const sub = useSelector((state) => state.auth.subscription);
+  const userId = useSelector((state) => state.auth.id);
+
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.async = true;
+    document.body.appendChild(script);
+}, []);
+
+const handleSubscribe = async () => {
+  try {
+      const response = await axios.post('http://localhost:8080/api/v1/payment/create-order', null, {
+          params: { amount: '59900', userId }
+      });
+      const orderId = response.data;
+
+      const options = {
+          key: "rzp_test_8b6GHpvbMnFOEM",
+          amount: 59900, // Amount in paise (599 INR)
+          currency: 'INR',
+          name: 'Job Portal',
+          description: 'Subscription for more jobs and resume assistance',
+          order_id: orderId,
+          handler: async (response) => {
+              const paymentData = {
+                  paymentId: response.razorpay_payment_id,
+                  orderId: response.razorpay_order_id,
+                  userId:userId,
+              };
+              await axios.post('http://localhost:8080/api/v1/payment/update-order', paymentData);
+              
+          },
+          prefill: {
+              email: email,
+          },
+          theme: {
+              color: '#3399cc',
+          },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.on('payment.failed', (response) => {
+          
+      });
+      rzp.open();
+  } catch (error) {
+      console.error('Error in subscription process:', error);
+    
+  }
+};
+
+if (sub) {
+  return null; 
+}
+
   return (
     <section className="py-12 px-4">
       <div className="max-w-6xl mx-auto">
@@ -67,7 +124,9 @@ const Pricing = () => {
                 Security
               </li>
             </ul>
-            <button className="bg-indigo-700 text-white hover:bg-indigo-900 duration-300 rounded-md py-2 px-6 text-base sm:text-lg mt-6">
+            <button
+            onClick={handleSubscribe}
+            className="bg-indigo-700 text-white hover:bg-indigo-900 duration-300 rounded-md py-2 px-6 text-base sm:text-lg mt-6">
               Subscribe
             </button>
           </div>
