@@ -48,7 +48,7 @@ export const registerUser = createAsyncThunk(
 );
 
 export const resendOTP = createAsyncThunk(
-  'auth/resendOTP',
+  "auth/resendOTP",
   async (formData, { rejectWithValue }) => {
     try {
       const response = await axios.post(`${AUTH_URL}resendOTP`, formData);
@@ -60,7 +60,7 @@ export const resendOTP = createAsyncThunk(
 );
 
 export const verifyOTP = createAsyncThunk(
-  'auth/verifyOTP',
+  "auth/verifyOTP",
   async (formData, { rejectWithValue }) => {
     try {
       const response = await axios.post(`${AUTH_URL}verifyOtp`, formData);
@@ -71,16 +71,15 @@ export const verifyOTP = createAsyncThunk(
   }
 );
 
-
 export const getUser = createAsyncThunk(
   "auth/getUser",
   async (id, { getState, rejectWithValue }) => {
     try {
       const state = getState();
       const token = state.auth.token;
-      
+
       const response = await axios.get(`${USER_SERVICE}candidate`, {
-        params:{id},
+        params: { id },
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -93,7 +92,7 @@ export const getUser = createAsyncThunk(
 );
 
 export const verifyDoc = createAsyncThunk(
-  'auth/verifyDoc',
+  "auth/verifyDoc",
   async (formData, { rejectWithValue }) => {
     try {
       const response = await axios.post(`${AUTH_URL}verifyDoc`, formData);
@@ -104,11 +103,127 @@ export const verifyDoc = createAsyncThunk(
   }
 );
 
+export const addExp = createAsyncThunk(
+  "auth/addExp",
+  async (formData, { getState, rejectWithValue }) => {
+    try {
+      const state = getState();
+      const token = state.auth.token;
+
+      const response = await axios.post(`${USER_SERVICE}addExperience`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const getExp = createAsyncThunk(
+  "auth/getExp",
+  async (id, { getState, rejectWithValue }) => {
+    try {
+      const state = getState();
+      const token = state.auth.token;
+
+      const response = await axios.get(`${USER_SERVICE}getExperience/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const addEdu = createAsyncThunk(
+  "auth/addEdu",
+  async (formData, { getState, rejectWithValue }) => {
+    try {
+      const state = getState();
+      const token = state.auth.token;
+
+      const response = await axios.post(`${USER_SERVICE}addEducation`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const getEdu = createAsyncThunk(
+  "auth/getEdu",
+  async (id, { getState, rejectWithValue }) => {
+    try {
+      const state = getState();
+      const token = state.auth.token;
+
+      const response = await axios.get(`${USER_SERVICE}getEducation/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const addSkill = createAsyncThunk(
+  "auth/addSkill",
+  async (formData, { getState, rejectWithValue }) => {
+    try {
+      const state = getState();
+      const token = state.auth.token;
+
+      const response = await axios.post(`${USER_SERVICE}addSkill`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const getSkill = createAsyncThunk(
+  "auth/getSkill",
+  async (id, { getState, rejectWithValue }) => {
+    try {
+      const state = getState();
+      const token = state.auth.token;
+
+      const response = await axios.get(`${USER_SERVICE}getSkill/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+
 const initialState = {
   id: null,
   user: null,
   token: null,
   role: null,
+  email: null,
   subscription: null,
   error: null,
   isAuthenticated: null,
@@ -123,6 +238,7 @@ const authSlice = createSlice({
       state.user = null;
       state.token = null;
       state.role = null;
+      state.email = null;
       state.subscription = null;
       state.error = null;
       state.isAuthenticated = false;
@@ -130,22 +246,23 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-    .addCase(loginUser.pending, (state) => {
-      state.error = null;
-    })
-    .addCase(loginUser.fulfilled, (state, action) => {
-      state.id = action.payload.id;
-      state.user = action.payload.user;
-      state.token = action.payload.token;
-      state.role = action.payload.role;
-      state.subscription = action.payload.subscription;
-      state.isAuthenticated = true;
-      state.error = null;
-    })
-    .addCase(loginUser.rejected, (state, action) => {
-      state.error = action.payload;
-      state.isAuthenticated = false;
-    })
+      .addCase(loginUser.pending, (state) => {
+        state.error = null;
+      })
+      .addCase(loginUser.fulfilled, (state, action) => {
+        state.id = action.payload.id;
+        state.user = action.payload.user;
+        state.token = action.payload.token;
+        state.role = action.payload.role;
+        state.email = action.payload.email;
+        state.subscription = action.payload.subscription;
+        state.isAuthenticated = true;
+        state.error = null;
+      })
+      .addCase(loginUser.rejected, (state, action) => {
+        state.error = action.payload;
+        state.isAuthenticated = false;
+      });
   },
 });
 

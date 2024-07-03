@@ -27,6 +27,8 @@ import PostJob from "../components/recruiter/PostJob.jsx";
 import MyApplications from "../components/recruiter/MyApplications.jsx";
 import MyJobs from "../components/recruiter/MyJobs.jsx";
 import SingleJob from "../pages/SingleJob.jsx";
+import Profile from '../components/common/profile/Profile.jsx'
+import UserProfile from "../components/common/profile/UserProfile.jsx";
 
 const router = createBrowserRouter([
   { path: "/login", element: <Login /> },
@@ -42,11 +44,20 @@ const router = createBrowserRouter([
       { path: "/contact", element: <Contact /> },
       { path: "/jobs", element: <Jobs /> },
       { path: "/compiler", element: <Ide /> },
+      { path: "/user/profile", element: <UserProfile/> },
       {
         path:"/jobdetail/:id",
         element: (
           <ProtectedRoute requiredRole="USER">
             <SingleJob />{" "}
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path:"/userdetail/:id",
+        element: (
+          <ProtectedRoute requiredRole="RECRUITER">
+            <Profile />{" "}
           </ProtectedRoute>
         ),
       },

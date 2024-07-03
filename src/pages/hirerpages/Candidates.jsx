@@ -15,7 +15,6 @@ const Candidates = () => {
     const formData = { role: "USER" };
     dispatch(listCandidates(formData))
       .then((response) => {
-        console.log(response.payload);
         setCandidates(response.payload);
         setIsLoading(false);
       })
