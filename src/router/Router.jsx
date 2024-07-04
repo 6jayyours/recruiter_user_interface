@@ -44,7 +44,7 @@ const router = createBrowserRouter([
       { path: "/contact", element: <Contact /> },
       { path: "/jobs", element: <Jobs /> },
       { path: "/compiler", element: <Ide /> },
-      { path: "/user/profile", element: <UserProfile/> },
+      { path: "/user/profile", element:<ProtectedRoute requiredRole="USER"><UserProfile/></ProtectedRoute>  },
       {
         path:"/jobdetail/:id",
         element: (

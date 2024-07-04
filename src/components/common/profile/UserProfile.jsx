@@ -3,10 +3,12 @@ import EducationModal from "../../user/modals/EducationModal";
 import ExperienceModal from "../../user/modals/ExperienceModal";
 import SkillModal from "../../user/modals/SkillModal";
 import { useDispatch, useSelector } from "react-redux";
-import { getEdu, getExp, getSkill } from "../../../redux/slice/authSlice";
+import { getEdu, getExp, getSkill, getUser, updateUser } from "../../../redux/slice/authSlice";
+import { getPicture, uploadProfilePicture } from "../../../redux/slice/adminSlice";
 
 const UserProfile = () => {
   const id = useSelector((state) => state.auth.id);
+  const token = useSelector((state) => state.auth.token);
 
   const dispatch = useDispatch();
 
@@ -17,6 +19,14 @@ const UserProfile = () => {
   const [experiences, setExperiences] = useState([]);
   const [educations, setEducations] = useState([]);
   const [skills, setSkills] = useState([]);
+
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
+  const [profileImage, setProfileImage] = useState(null);
+
+  const [isPersonalDetailsEditable, setIsPersonalDetailsEditable] = useState(false);
+  const [isContactInfoEditable, setIsContactInfoEditable] = useState(false);
+  const [isPasswordEditable, setIsPasswordEditable] = useState(false);
 
   useEffect(() => {
     dispatch(getExp(id))
@@ -63,6 +73,136 @@ const UserProfile = () => {
     setSkillModal(!skillModal);
   };
 
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    username: "",
+    email: "",
+    gender: "",
+    role: "",
+    mobile: "",
+    oldPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+
+  useEffect(() => {
+    if (id) {
+      dispatch(getUser(id))
+        .then((response) => {
+          const userData = response.payload;
+          setFormData({
+            firstName: userData.firstName || "",
+            lastName: userData.lastName || "",
+            username: userData.username || "",
+            email: userData.email || "",
+            gender: userData.gender || "",
+            mobile: userData.mobile || "",
+            role: userData.role || "",
+          });
+        })
+        .catch((error) => {
+          console.error("Error fetching user:", error);
+        });
+    }
+  }, [dispatch, id]);
+
+  useEffect(() => {
+    if (id) {
+      dispatch(getPicture(id))
+        .then((response) => {
+          setProfileImage(response.payload);
+        })
+        .catch((error) => {
+          console.error("Error fetching profile image:", error);
+        });
+    }
+  }, [dispatch, id]);
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedFile(file);
+      const reader = new FileReader();
+      reader.onload = () => {
+        setPreviewUrl(reader.result);
+      };
+      reader.readAsDataURL(file);
+      handleDocumentSubmit(file);
+    }
+  };
+
+  const handleDocumentSubmit = (file) => {
+    if (!file) {
+      console.error("No file selected");
+      return;
+    }
+    if (file.size === 0) {
+      console.error("Please upload a file");
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      console.error("File size exceeds 10MB limit.");
+      return;
+    }
+    dispatch(uploadProfilePicture({ file, id, token }))
+      .then((response) => {
+        console.log(response.payload);
+        setProfileImage(response.payload);
+      })
+      .catch((error) => {
+        console.error("Error uploading profile picture:", error);
+      });
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleEditPersonalDetails = () => {
+    setIsPersonalDetailsEditable(!isPersonalDetailsEditable);
+  };
+
+  const handleSubmitPersonalDetails = () => {
+    dispatch(updateUser({ id, token, data: formData }))
+      .then((response) => {
+        console.log(response.payload);
+        setIsPersonalDetailsEditable(false); // Disable editing after successful update
+      })
+      .catch((error) => {
+        console.error("Error updating user data:", error);
+      });
+  };
+
+  const handleEditContactInfo = () => {
+    setIsContactInfoEditable(true);
+    
+  };
+
+  const handleSubmitContactInfo = () => {
+    dispatch(updateUser({ id, token, data: formData }))
+      .then((response) => {
+        console.log(response.payload);
+        setIsContactInfoEditable(false);
+      })
+      .catch((error) => {
+        console.error("Error updating user data:", error);
+      });
+  };
+
+  const handleEditPassword = () => {
+    setIsPasswordEditable(false);
+  };
+
+  const handleSubmitPassword = () => {
+    setIsPasswordEditable(false); // Disable editing after submit
+    // Handle submit logic for password change
+  };
+
   return (
     <div className="p-6 bg-white min-h-screen mt-20">
       <div className="overflow-x-auto">
@@ -70,12 +210,12 @@ const UserProfile = () => {
           <div className="grid grid-cols-1 gap-6">
             <div className="p-6 rounded-md shadow bg-white border border-gray-300 flex">
               <div>
-                <input type="file" className="hidden" id="profile-picture" />
+                <input type="file" className="hidden" id="profile-picture" onChange={handleFileChange}/>
                 <label htmlFor="profile-picture" className="cursor-pointer">
                   <div className="w-28 h-28 max-w-[112px] max-h-[112px] relative">
                     <img
                       className="rounded-full shadow ring-4 ring-white"
-                      src={""}
+                      src={previewUrl || profileImage}
                       alt="Profile"
                     />
                     <div className="absolute inset-0 rounded-full bg-black bg-opacity-50 flex items-center justify-center text-white opacity-0 hover:opacity-100">
@@ -86,8 +226,12 @@ const UserProfile = () => {
               </div>
 
               <div className="mt-4 md:mt-0 md:ml-5 text-center md:text-left">
-                <h5 className="text-xl font-semibold">Arjun M</h5>
-                <p className="text-gray-500">Admin</p>
+                <h5 className="text-xl font-semibold">
+                {formData.firstName} {formData.lastName}
+                </h5>
+                <p className="text-gray-500">
+                {formData.role}
+                </p>
               </div>
             </div>
             <div className="p-6 rounded-md shadow bg-white border border-gray-300">
@@ -101,8 +245,11 @@ const UserProfile = () => {
                     type="text"
                     className="w-full border border-gray-300 p-2 mt-2 rounded-md"
                     placeholder="First Name"
-                    id="firstname"
-                    name="firstname"
+                    id="firstName"
+                    name="firstName"
+                    value={formData.firstName}
+                    onChange={handleChange}
+                    disabled={!isPersonalDetailsEditable}
                   />
                 </div>
                 <div>
@@ -113,8 +260,11 @@ const UserProfile = () => {
                     type="text"
                     className="w-full border border-gray-300 p-2 mt-2 rounded-md"
                     placeholder="Last Name"
-                    id="lastname"
-                    name="lastname"
+                    id="lastName"
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={handleChange}
+                    disabled={!isPersonalDetailsEditable}
                   />
                 </div>
                 <div>
@@ -127,6 +277,9 @@ const UserProfile = () => {
                     placeholder="Username"
                     id="username"
                     name="username"
+                    value={formData.username}
+                    onChange={handleChange}
+                    disabled={!isPersonalDetailsEditable}
                   />
                 </div>
                 <div>
@@ -139,6 +292,9 @@ const UserProfile = () => {
                     placeholder="Email"
                     id="email"
                     name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    disabled={!isPersonalDetailsEditable}
                   />
                 </div>
                 <div>
@@ -149,6 +305,9 @@ const UserProfile = () => {
                     className="w-full border border-gray-300 p-2 mt-2 rounded-md"
                     id="gender"
                     name="gender"
+                    value={formData.gender}
+                    onChange={handleChange}
+                    disabled={!isPersonalDetailsEditable}
                   >
                     <option value="">Select Gender</option>
                     <option value="male">Male</option>
@@ -157,9 +316,23 @@ const UserProfile = () => {
                   </select>
                 </div>
                 <div className="col-span-2">
-                  <button className="bg-indigo-600 hover:bg-indigo-800 text-white py-2 px-4 rounded-md mt-5">
-                    Save Changes
-                  </button>
+                {isPersonalDetailsEditable ? (
+                    <button
+                      type="button"
+                      className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
+                      onClick={handleSubmitPersonalDetails}
+                    >
+                      Save Changes
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md"
+                      onClick={handleEditPersonalDetails}
+                    >
+                      Edit
+                    </button>
+                  )}
                 </div>
               </form>
             </div>
@@ -171,16 +344,33 @@ const UserProfile = () => {
                     Phone No :
                   </label>
                   <input
-                    name="phone"
-                    id="phone"
-                    type="tel"
+                    name="mobile"
+                    id="mobile"
+                    type="text"
                     className="w-full border border-gray-300 p-2 mt-2 rounded-md"
                     placeholder="Phone"
+                    value={formData.mobile}
+                    onChange={handleChange}
+                    disabled={!isContactInfoEditable}
                   />
                 </div>
-                <button className="bg-indigo-600 hover:bg-indigo-800 text-white py-2 px-4 rounded-md mt-5">
-                  Save Changes
-                </button>
+                {isContactInfoEditable ? (
+                    <button
+                      type="button"
+                      className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
+                      onClick={handleSubmitContactInfo}
+                    >
+                      Save Changes
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md"
+                      onClick={handleEditContactInfo}
+                    >
+                      Edit
+                    </button>
+                  )}
               </form>
             </div>
 
