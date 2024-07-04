@@ -3,11 +3,23 @@ import { FiMapPin } from "react-icons/fi";
 import { FaRegClock } from "react-icons/fa";
 import { GiMoneyStack } from "react-icons/gi";
 import { CgOrganisation } from "react-icons/cg";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getJob } from "../redux/slice/jobSlice";
 import { useParams } from "react-router";
+import ApplyModal from "../components/user/modals/ApplyModal";
 
 const SingleJob = () => {
+  const userId = useSelector((state) => state.auth.id);
+
+  const [isModalOpen, setIsModalOpen] = useState(false); 
+
+  const handleApply = () => {
+    setIsModalOpen(true); // Open the modal when applying
+};
+const handleModalClose = () => {
+    setIsModalOpen(false); // Close the modal when it's closed
+};
+
   const [job, setJob] = useState("");
   const [requirement, setRequirement] = useState("");
   const [responsibility, setResponsibility] = useState("");
@@ -59,7 +71,9 @@ const SingleJob = () => {
             </div>
           </div>
           <div>
-            <button className="bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-800 transition duration-300">
+            <button
+            onClick={handleApply}
+             className="bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-800 transition duration-300">
               Apply For Job
             </button>
           </div>
@@ -104,8 +118,10 @@ const SingleJob = () => {
               ))}
             </ul>
           </div>
+          <ApplyModal isOpen={isModalOpen} onClose={handleModalClose} jobId={id} userId={userId} />
         </div>
       </div>
+      
     </div>
   );
 };

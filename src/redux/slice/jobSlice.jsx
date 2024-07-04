@@ -78,6 +78,23 @@ export const getJob = createAsyncThunk(
   }
 );
 
+export const applyForJob = createAsyncThunk('jobs/applyForJob', async ({ formData }, thunkAPI) => {
+  const { getState, rejectWithValue } = thunkAPI;
+  try {
+    const state = getState();
+    const token = state.auth.token;
+    const res = await axios.post(`${JOBS_SERVICE}apply`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        'Authorization': `Bearer ${token}`,
+      }
+    });
+    return res.data;
+  } catch (error) {
+    return rejectWithValue(error.message);
+  }
+});
+
 
 
 
