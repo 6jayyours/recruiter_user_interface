@@ -64,24 +64,24 @@ export const activateUser = createAsyncThunk(
 );
 
 
-export const profilePicture = createAsyncThunk(
-  "admin/profilePicture",
-  async ({ formData }, { rejectWithValue, getState }) => {
+export const uploadProfilePicture = createAsyncThunk(
+  'profile/uploadProfilePicture',
+  async ({ file, id, token }, { rejectWithValue }) => {
     try {
-      const state = getState();
-      const token = state.auth.token; // Assuming token is stored in auth slice
-      const response = await axios.post(`${USER_SERVICE}profilePicture`, 
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'multipart/form-data', // Explicitly setting content type
-          },
-        }
-      );
-      return response.data; // Return the response data on success
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('id', id);
+
+      const response = await axios.post(`${USER_SERVICE}profilePicture`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${token}`
+        },
+      });
+
+      return response.data;
     } catch (error) {
-      return rejectWithValue(error.message); // Reject with the error message on failure
+      return rejectWithValue(error.response.data);
     }
   }
 );

@@ -91,6 +91,22 @@ export const getUser = createAsyncThunk(
   }
 );
 
+export const updateUser = createAsyncThunk(
+  "auth/updateUser",
+  async ({ id, token, data }, { rejectWithValue }) => {
+    try {
+      const response = await axios.put(`${USER_SERVICE}/update?id=${id}`, data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 export const verifyDoc = createAsyncThunk(
   "auth/verifyDoc",
   async (formData, { rejectWithValue }) => {
