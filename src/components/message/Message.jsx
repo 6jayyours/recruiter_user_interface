@@ -1,31 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
-const Message = ({handleSend}) => {
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      text: "Hello!",
-      sender: "John Doe",
-      image:
-        "https://res.cloudinary.com/de7oiy033/image/upload/v1719295168/verification/bzvhub4tzw4dlf5dmiwn.jpg",
-      timestamp: new Date(),
-    },
-    {
-      id: 2,
-      text: "Hi there!",
-      sender: "Me",
-      image:
-        "https://res.cloudinary.com/de7oiy033/image/upload/v1719295168/verification/bzvhub4tzw4dlf5dmiwn.jpg",
-      timestamp: new Date(),
-    },
-    // Add more messages as needed
-  ]);
-  const [newMessage, setNewMessage] = useState("");
+const Message = ({ handleSend, messageInput, setMessageInput, history }) => {
+  
+
   const [selectedFile, setSelectedFile] = useState(null);
   const [selectedAudio, setSelectedAudio] = useState(null);
   const [selectedDocument, setSelectedDocument] = useState(null);
-
-
 
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
@@ -41,68 +22,12 @@ const Message = ({handleSend}) => {
 
   return (
     <div className="flex flex-col h-full p-4 bg-white rounded-lg shadow-md">
-      <div className="flex-grow overflow-y-auto mb-4">
-        {messages.map((message) => (
-          <div
-            key={message.id}
-            className={`mb-4 flex ${
-              message.sender === "Me" ? "justify-end" : "justify-start"
-            }`}
-          >
-            {message.sender !== "Me" && (
-              <img
-                src={message.image}
-                alt={message.sender}
-                className="w-10 h-10 rounded-full mr-2"
-              />
-            )}
-            <div
-              className={`inline-block p-2 rounded-lg ${
-                message.sender === "Me"
-                  ? "bg-indigo-300 text-white"
-                  : "bg-gray-200"
-              }`}
-            >
-              {message.text && (
-                <p className="text-sm text-gray-500 mb-1">{message.text}</p>
-              )}
-              {message.file && (
-                <p className="text-sm text-blue-500 mb-1">
-                  {message.file.name}
-                </p>
-              )}
-              {message.audio && (
-                <p className="text-sm text-blue-500 mb-1">
-                  {message.audio.name}
-                </p>
-              )}
-              {message.document && (
-                <p className="text-sm text-blue-500 mb-1">
-                  {message.document.name}
-                </p>
-              )}
-              <p className="text-xs text-gray-400">
-                {message.timestamp.toLocaleTimeString([], {
-                  hour: "numeric",
-                  minute: "2-digit",
-                })}
-              </p>
-            </div>
-            {message.sender === "Me" && (
-              <img
-                src={message.image}
-                alt={message.sender}
-                className="w-10 h-10 rounded-full ml-2"
-              />
-            )}
-          </div>
-        ))}
-      </div>
+      
       <div className="mt-4 flex items-center">
         <input
           type="text"
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
+          value={messageInput}
+          onChange={(e) => setMessageInput(e.target.value)}
           className="flex-grow p-2 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           placeholder="Type a message"
         />
@@ -141,7 +66,7 @@ const Message = ({handleSend}) => {
         />
         <label
           htmlFor="document-input"
-          className="p-2 bg-gray-200 text-gray-700  hover:bg-gray-300 cursor-pointer"
+          className="p-2 bg-gray-200 text-gray-700 hover:bg-gray-300 cursor-pointer"
         >
           📄
         </label>

@@ -56,8 +56,8 @@ const Recruiterslist = () => {
     if (documentFilter) {
       filtered = filtered.filter((recruiter) =>
         documentFilter === "available"
-          ? recruiter.idImageUrl === null
-          : recruiter.idImageUrl !== null
+          ? recruiter.idImageUrl !== null
+          : recruiter.idImageUrl === null
       );
     }
 

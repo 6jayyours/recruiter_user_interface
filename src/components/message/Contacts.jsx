@@ -1,37 +1,51 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchReceiverIdsBySenderId, getUsersByIds } from '../../redux/slice/authSlice';
 
-const Contacts = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const contacts = [
-    { id: 1, name: 'John Doe', image: 'https://res.cloudinary.com/de7oiy033/image/upload/v1719295168/verification/bzvhub4tzw4dlf5dmiwn.jpg' },
-    { id: 2, name: 'Jane Smith', image: 'https://res.cloudinary.com/de7oiy033/image/upload/v1719295168/verification/bzvhub4tzw4dlf5dmiwn.jpg' },
-    // Add more contacts as needed
-  ];
+const Contacts = ({ onSelectContact }) => {
+  const dispatch = useDispatch();
+  const id = useSelector(state => state.auth.id);
+  const role = useSelector(state => state.auth.role);
+  const [allReceivers, setAllReceivers] = useState([]);
 
-  const filteredContacts = contacts.filter(contact =>
-    contact.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  useEffect(() => {
+    dispatch(fetchReceiverIdsBySenderId(id))
+      .then((response) => {
+        const receiverIds = response.payload;
+        return dispatch(getUsersByIds(receiverIds));
+      })
+      .then((users) => {
+        console.log(users.payload); // This should log the array of users fetched
+        setAllReceivers(users.payload);
+      })
+      .catch((error) => {
+        console.error('Error fetching receiver data:', error);
+      });
+  }, [dispatch, id]);
+
+  const handleSendMessage = (contact) => {
+    if (role === 'USER') {
+      onSelectContact(contact);
+      window.location.href = `/message/user?userId=${encodeURIComponent(contact.id)}`;
+    } else if (role === 'RECRUITER') {
+      onSelectContact(contact);
+      window.location.href = `/message/recruiter?userId=${encodeURIComponent(contact.id)}`;
+    }
+  };
 
   return (
     <div className="w-full h-full bg-white p-4 overflow-y-auto shadow-lg">
       <h2 className="text-xl font-semibold mb-4 text-gray-700">Contacts</h2>
-      <input
-        type="text"
-        value={searchTerm}
-        onChange={e => setSearchTerm(e.target.value)}
-        placeholder="Search contacts"
-        className="w-full mb-4 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-      />
       <ul>
-        {filteredContacts.map(contact => (
-          <li key={contact.id} className="flex items-center mb-4 p-2 rounded-lg hover:bg-indigo-100 cursor-pointer transition-colors duration-300 ease-in-out">
-            <img src={contact.image} alt={contact.name} className="w-10 h-10 rounded-full mr-3" />
-            <span className="text-gray-600">{contact.name}</span>
+        {allReceivers.map(contact => (
+          <li key={contact.id} onClick={() => handleSendMessage(contact)} className="flex items-center mb-4 p-2 rounded-lg hover:bg-indigo-100 cursor-pointer transition-colors duration-300 ease-in-out">
+            <img src={contact.profileImageUrl} alt={contact.firstName} className="w-10 h-10 rounded-full mr-3" />
+            <span className="text-gray-600">{contact.firstName} {contact.lastName}</span>
           </li>
         ))}
       </ul>
     </div>
   );
-}
+};
 
 export default Contacts;

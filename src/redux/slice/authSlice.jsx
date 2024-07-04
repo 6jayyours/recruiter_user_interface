@@ -1,6 +1,6 @@
 import axios from "axios";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { AUTH_URL, USER_SERVICE } from "../../constants/Url";
+import { AUTH_URL, CHAT_URL, USER_SERVICE } from "../../constants/Url";
 
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
@@ -172,6 +172,47 @@ export const addEdu = createAsyncThunk(
       return response.data;
     } catch (error) {
       return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const fetchReceiverIdsBySenderId = createAsyncThunk(
+  'chat/fetchReceiverIdsBySenderId',
+  async (senderId, { getState }) => {
+    try {
+      const state = getState();
+      const token = state.auth.token;
+      
+      const res = await axios.get(`${CHAT_URL}ws/receivers/${senderId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return res.data;
+    } catch (error) {
+      console.error('Error fetching receiver IDs by sender ID:', error);
+      throw error;
+    }
+  }
+);
+
+export const getUsersByIds = createAsyncThunk(
+  'auth/getUsersByIds',
+  async (userIds, { getState }) => {
+    const state = getState();
+    const token = state.auth.token;
+
+    try {
+      const userIdsString = userIds.join(',');
+      const res = await axios.get(`${USER_SERVICE}/byIds/${userIdsString}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return res.data; // Assuming the response is an array of users
+    } catch (error) {
+      console.error('Error fetching users by IDs:', error);
+      throw error;
     }
   }
 );

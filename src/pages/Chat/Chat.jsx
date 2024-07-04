@@ -1,23 +1,29 @@
-import React, { useEffect, useRef, useState } from 'react'
-import Contacts from '../../components/message/Contacts'
-import Person from '../../components/message/Person'
-import Message from '../../components/message/Message'
-import { useSelector } from 'react-redux'
-import axios from 'axios'
+import React, { useEffect, useRef, useState } from 'react';
+import Contacts from '../../components/message/Contacts';
+import Person from '../../components/message/Person';
+import Message from '../../components/message/Message';
+import { useSelector } from 'react-redux';
+import axios from 'axios';
 import { over } from "stompjs";
+import { useLocation } from 'react-router';
 
 const Chat = () => {
   const [history, setHistory] = useState([]);
   const [messageInput, setMessageInput] = useState("");
-  const id = useSelector((state) =>state.auth.id)
-  const toId = 4;
+  const [selectedContact, setSelectedContact] = useState(null); // State to hold selected contact information
+  const id = useSelector((state) => state.auth.id);
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const toId = queryParams.get("userId");
+
+  
 
   const stompClient = useRef(null);
 
   useEffect(() => {
     // Connect to WebSocket
     const connect = () => {
-      const socket = new SockJS("http://localhost:8765/ws");
+      const socket = new SockJS("http://68.183.247.3:8085/ws");
       stompClient.current = over(socket);
       stompClient.current.connect({}, onConnected, onError);
     };
@@ -35,7 +41,7 @@ const Chat = () => {
   useEffect(() => {
     if (toId) {
       axios
-        .get(`http://localhost:8765/ws/messages/${id}/${toId}`)
+        .get(`https://recruiterjobs.online/api/ws/messages/${id}/${toId}`)
         .then((res) => {
           setHistory(res.data);
         })
@@ -62,8 +68,6 @@ const Chat = () => {
     console.log("recieved");
     console.log("Message received", payload);
     const message = JSON.parse(payload.body);
-    console.log(selectedUserId, typeof selectedUserId);
-    console.log(message.senderId, typeof message.senderId);
     console.log("passing the condition ");
     setHistory((prev) => [...prev, message]);
   };
@@ -83,21 +87,25 @@ const Chat = () => {
     }
   };
 
+  const handleSelectContact = (contact) => {
+    setSelectedContact(contact); // Update selected contact
+  };
+
   return (
     <div className="flex h-[69vh] overflow-hidden mt-24 p-2">
       <div className="w-1/4 h-full border border-gray-300">
-        <Contacts />
+        <Contacts onSelectContact={handleSelectContact} />
       </div>
       <div className="flex flex-col w-3/4 h-full">
         <div className="border border-gray-300">
-          <Person />
+          {selectedContact && <Person person={selectedContact} />} {/* Pass selected contact to Person component */}
         </div>
         <div className="flex-grow overflow-y-auto overflow-hidden border border-gray-300">
-          <Message handleSend={handleSend} />
+          <Message handleSend={handleSend} messageInput={messageInput} setMessageInput={setMessageInput} history={history} />
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Chat
+export default Chat;

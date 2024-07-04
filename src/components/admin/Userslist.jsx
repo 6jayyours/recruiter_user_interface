@@ -140,7 +140,7 @@ const Userslist = () => {
               <tr key={user.id}>
                 <td className="py-3 px-4 flex items-center">
                   <img
-                  src=""
+                  src={user.profileImageUrl}
                     alt="User"
                     className="w-10 h-10 rounded-full"
                   />
