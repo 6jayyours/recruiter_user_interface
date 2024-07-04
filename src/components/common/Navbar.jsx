@@ -27,7 +27,7 @@ const Navbar = () => {
     if (authenticated) {
       dispatch(getUser(id))
         .then((response) => {
-          setProfileImage(response.payload.idImageUrl);
+          setProfileImage(response.payload.profileImageUrl);
           const firstname = response.payload.firstName;
           const lastName = response.payload.lastName;
           setUsername(`${firstname} ${lastName}`);

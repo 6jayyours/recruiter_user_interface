@@ -17,6 +17,7 @@ const Userslist = () => {
     const formData = { role: "USER" };
     dispatch(listUsers(formData))
       .then((response) => {
+        console.log(response.payload)
         setCandidates(response.payload);
         setFilteredCandidates(response.payload);
       })
@@ -139,13 +140,14 @@ const Userslist = () => {
               <tr key={user.id}>
                 <td className="py-3 px-4 flex items-center">
                   <img
-                  src={user.profileImageUrl}
+                  src=""
                     alt="User"
                     className="w-10 h-10 rounded-full"
                   />
+                  <p></p>
                 </td>
                 <td className="py-3 px-4">
-                  {user.firstName} {user.lastName}
+                  {user.firstName} {user.lastName} 
                 </td>
                 <td className="py-3 px-4">
                   <span

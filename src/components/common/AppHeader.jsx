@@ -18,6 +18,10 @@ const AppHeader = ({ title }) => {
       });
   }, [dispatch, id]);
 
+  if (!user) {
+    return null; // or return a loading indicator if needed
+  }
+
   return (
     <div className="h-18 bg-indigo-500 py-4 px-6 flex justify-between items-center ">
       <h4 className="text-white text-xl font-semibold">{title}</h4>
