@@ -79,24 +79,22 @@ export const getJob = createAsyncThunk(
 );
 
 export const applyForJob = createAsyncThunk(
-  'jobs/applyForJob', 
-  async (formData, thunkAPI) => {
-    const { getState, rejectWithValue } = thunkAPI;
+  'jobs/applyForJob',
+  async (formData, { rejectWithValue, getState }) => {
     try {
-      console.log(formData)
+      // Get the token from the auth state
       const state = getState();
-      const { token } = state.auth;
-      // Send userId and jobId as params in the URL
-      const res = await axios.post(`${JOBS_SERVICE}apply`, formData, {
+      const token = state.auth.token; // Adjust the path according to your state structure
 
+      const response = await axios.post(`${JOBS_SERVICE}apply`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
-      return res.data;
+      return response.data;
     } catch (error) {
-      return rejectWithValue(error.message);
+      return rejectWithValue(error.response ? error.response.data : error.message);
     }
   }
 );

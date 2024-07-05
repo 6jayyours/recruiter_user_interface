@@ -16,15 +16,19 @@ const ApplyModal = ({ isOpen, onClose, jobId }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
+  
     const formData = new FormData();
-    formData.append('resume', file);
+    if (file) {
+      formData.append('resume', file);
+    }
     formData.append('userId', userId);
     formData.append('jobId', jobId);
-
-    dispatch(applyForJob({ formData }))
+  
+    // Log the formData to check its contents
+    console.log('Submitting formData:', formData);
+  
+    dispatch(applyForJob(formData))
       .then((response) => {
-        
         console.log('Application submitted successfully:', response.payload);
         onClose(); // Close modal after successful submission
       })
