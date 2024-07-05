@@ -13,7 +13,7 @@ const DropDownProfile = () => {
 
     const role = useSelector((state) => state.auth.role);
     const profilePath = role === "USER" ? "/user/profile" : "/recruiter/profile";
-    const dashPath = role === "USER" ? "/user/profile" : "/recruiter/profile";
+    const dashPath = role === "USER" ? "/user/dashboard" : "/recruiter/dashboard";
 
     return (
         <div className='flex flex-col absolute w-[100px] bg-white items-center p-[15px] top-[4.2rem] right-[0rem] border border-gray-300 rounded shadow-xl'>

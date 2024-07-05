@@ -29,11 +29,43 @@ import MyJobs from "../components/recruiter/MyJobs.jsx";
 import SingleJob from "../pages/SingleJob.jsx";
 import Profile from '../components/common/profile/Profile.jsx'
 import UserProfile from "../components/common/profile/UserProfile.jsx";
+import UserDashboard from "../pages/userpages/UserDashboard.jsx";
+import RecDashboard from "../components/recruiter/sections/RecDashboard.jsx";
 
 const router = createBrowserRouter([
   { path: "/login", element: <Login /> },
   { path: "/userRegistration", element: <UserRegister /> },
   { path: "/hirerRegistration", element: <HirerRegister /> },
+  {
+    path: "/user",
+    element: <UserDashboard />,
+    children: [
+      {
+        path: "dashboard",
+        element: (
+          <ProtectedRoute requiredRole="USER">
+            
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "profile",
+        element: (
+          <ProtectedRoute requiredRole="USER">
+           < UserProfile/>
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "appliedobs",
+        element: (
+          <ProtectedRoute requiredRole="USER">
+            
+          </ProtectedRoute>
+        ),
+      },
+    ]
+  },
 
   {
     path: "/",
@@ -170,6 +202,14 @@ const router = createBrowserRouter([
     element: <HirerDashboard />,
     children: [
       {
+        path: "dashboard",
+        element: (
+          <ProtectedRoute requiredRole="RECRUITER">
+            <RecDashboard />
+          </ProtectedRoute>
+        ),
+      },
+      {
         path: "profile",
         element: (
           <ProtectedRoute requiredRole="RECRUITER">
@@ -203,6 +243,7 @@ const router = createBrowserRouter([
       },
     ],
   },
+  
   { path: "/noauthorization", element: <NotAuthorized /> },
   { path: "/pagenotfound", element: <NotFound /> },
 ]);

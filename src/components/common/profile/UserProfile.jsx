@@ -204,7 +204,7 @@ const UserProfile = () => {
   };
 
   return (
-    <div className="p-6 bg-white min-h-screen mt-20">
+    <div className="p-6 bg-white min-h-screen">
       <div className="overflow-x-auto">
         <div className="container mx-auto">
           <div className="grid grid-cols-1 gap-6">

@@ -1,15 +1,14 @@
 import React from 'react'
+import { useDispatch } from 'react-redux';
+import { logoutUser } from '../../redux/slice/authSlice';
 import { Link } from 'react-router-dom'
-import navLogo from '../../../assets/logo.png'
+import navLogo from '../../assets/logo.png'
 import { PiSuitcaseSimpleFill } from 'react-icons/pi'
-import { MdLibraryAdd, MdLogout, MdManageAccounts } from 'react-icons/md'
-import { RiMailSendLine } from 'react-icons/ri'
-import { logoutUser } from '../../../redux/slice/authSlice'
-import { useDispatch } from 'react-redux'
-import { FaTachometerAlt } from 'react-icons/fa'
+import { MdLogout, MdManageAccounts } from 'react-icons/md'
+import { FaTachometerAlt } from 'react-icons/fa';
 
-const HirerSidebar = () => {
-  const dispatch = useDispatch();
+const UserSidebar = () => {
+    const dispatch = useDispatch();
 
     const handleLogout = () => {
         // Dispatch logout action
@@ -28,7 +27,7 @@ const HirerSidebar = () => {
       <div className="flex-grow">
         <div className="px-4 py-2">
         <Link
-            to="/recruiter/dashboard"
+            to="/user/dashboard"
             className="flex items-center justify-between mb-4 hover:bg-gray-600 transition-all duration-300 cursor-pointer p-2 rounded"
           >
             <div className="flex items-center">
@@ -38,7 +37,7 @@ const HirerSidebar = () => {
             <span className="bg-indigo-700 rounded-md px-2 text-sm">NEW</span>
           </Link>
           <Link
-            to="/recruiter/profile"
+            to="/user/profile"
             className="flex items-center justify-between mb-4 hover:bg-gray-600 transition-all duration-300 cursor-pointer p-2 rounded"
           >
             <div className="flex items-center">
@@ -47,25 +46,11 @@ const HirerSidebar = () => {
             </div>
           </Link>
           <Link
-            to="/recruiter/myjobs"
+            to="/user/appliedobs"
             className="flex items-center mb-4 hover:bg-gray-600 transition-all duration-300 cursor-pointer p-2 rounded"
           >
             <PiSuitcaseSimpleFill className="mr-2" />
-            <h2 className="text-lg font-semibold">My Jobs</h2>
-          </Link>
-          <Link
-            to="/recruiter/myapplications"
-            className="flex items-center mb-4 hover:bg-gray-600 transition-all duration-300 cursor-pointer p-2 rounded"
-          >
-            <RiMailSendLine className="mr-2" />
-            <h2 className="text-lg font-semibold">Applications</h2>
-          </Link>
-          <Link
-            to="/recruiter/postjob"
-            className="flex items-center mb-4 hover:bg-gray-600 transition-all duration-300 cursor-pointer p-2 rounded"
-          >
-            <MdLibraryAdd className="mr-2" />
-            <h2 className="text-lg font-semibold">Post Job</h2>
+            <h2 className="text-lg font-semibold">Applied Jobs</h2>
           </Link>
         </div>
       </div>
@@ -82,4 +67,4 @@ const HirerSidebar = () => {
   )
 }
 
-export default HirerSidebar
+export default UserSidebar
