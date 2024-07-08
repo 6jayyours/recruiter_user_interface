@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FiMapPin } from "react-icons/fi";
-import { FaRegClock } from "react-icons/fa";
+import { FaRegClock,FaUser, FaBuilding } from "react-icons/fa";
 import { GiMoneyStack } from "react-icons/gi";
 import { CgOrganisation } from "react-icons/cg";
 import { useDispatch, useSelector } from "react-redux";
@@ -119,6 +119,21 @@ const handleModalClose = () => {
             </ul>
           </div>
           <ApplyModal isOpen={isModalOpen} onClose={handleModalClose} jobId={id} userId={userId} />
+        </div>
+        <div className="p-6 flex items-center justify-between border-t border-gray-200">
+          <div className="w-3/4">
+          <h1 className="text-lg font-semibold text-gray-700 flex items-center">
+              <FaUser className="mr-2" /> Job Posted By: {job.posted}
+            </h1>
+            <h2 className="text-lg font-semibold text-gray-700 flex items-center mt-2">
+              <FaBuilding className="mr-2" /> Company: {job.company}
+            </h2>
+          </div>
+          <div className="w-1/4 text-right">
+            <button className="bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-800 transition duration-300">
+              Send recruiter a Message
+            </button>
+          </div>
         </div>
       </div>
       

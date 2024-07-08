@@ -15,12 +15,12 @@ const JobCard = ({ id,company, title, type, date, location, salary }) => {
   return (
     <div className="min-w-[1300px] md:flex justify-between items-center rounded shadow hover:shadow-md transition-all duration-500 p-5 bg-white mb-4">
       {/* 1st div */}
-      <div className="flex flex-col items-center w-full md:w-1/4">
+      <div className="flex flex-col items-center w-full md:w-[400px]">
         <h1 className="text-lg hover:text-indigo-600 font-bold transition-all duration-500 ms-3">
-          {company}
+          {title}
         </h1>
         <h2 className="text-md hover:text-indigo-500 font-bold transition-all duration-500 ms-3">
-          {title}
+          {company}
         </h2>
       </div>
       {/* 2nd div */}
