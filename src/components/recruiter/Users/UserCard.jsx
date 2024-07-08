@@ -1,10 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const UserCard = ({ id, firstname, lastname }) => {
+const UserCard = ({ id, firstname, lastname,profileImgPath }) => {
+  console.log(profileImgPath)
   return (
     <div className="group bg-white overflow-hidden rounded-md shadow text-center p-6 mb-4">
-      <img src="" className="size-20 rounded-full shadow mx-auto" />
+      <img src={profileImgPath} className="size-20 rounded-full shadow mx-auto" />
       <div className="mt-2">
         <h3 className="hover:text-indigo-600 font-semibold text-lg">
           {firstname} {lastname}

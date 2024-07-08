@@ -70,7 +70,6 @@ const JobList = () => {
         <table className="min-w-full bg-white rounded-lg overflow-hidden shadow-md">
           <thead className="bg-gray-800 text-white">
             <tr>
-              <th className="py-2 px-4 text-left">User</th>
               <th className="py-2 px-4 text-left">Posted By</th>
               <th className="py-2 px-4 text-left">Job Title</th>
               <th className="py-2 px-4 text-left">Posted On</th>
@@ -80,13 +79,6 @@ const JobList = () => {
           <tbody className="divide-y divide-gray-200">
             {currentJobs.map((job) => (
               <tr key={job.id}>
-                <td className="py-3 px-4 flex items-center">
-                  <img
-                    src="user_image_url"
-                    alt="User"
-                    className="w-10 h-10 rounded-full"
-                  />
-                </td>
                 <td className="py-3 px-4">{job.posted}</td>
                 <td className="py-3 px-4">{job.jobTitle}</td>
                 <td className="py-3 px-4">{new Date(job.postedTime).toLocaleDateString()}</td>

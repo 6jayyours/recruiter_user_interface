@@ -10,6 +10,7 @@ const Candidatelist = ({ candidates }) => {
           id={user.id}
           firstname={user.firstName}
           lastname={user.lastName}
+          profileImgPath={user.profileImageUrl}
         />
       ))}
     </div>
