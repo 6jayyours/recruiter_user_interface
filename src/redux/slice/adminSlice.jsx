@@ -1,6 +1,6 @@
 import axios from "axios";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { ADMIN_URL, USER_SERVICE } from "../../constants/Url";
+import { ADMIN_URL, JOBS_SERVICE, USER_SERVICE } from "../../constants/Url";
 
 export const listUsers = createAsyncThunk(
   "admin/listUsers",
@@ -62,6 +62,8 @@ export const getAllApps = createAsyncThunk(
     }
   }
 );
+
+
 
 export const activateUser = createAsyncThunk(
   'admin/activateUser',

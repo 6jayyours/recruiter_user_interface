@@ -31,6 +31,8 @@ import Profile from '../components/common/profile/Profile.jsx'
 import UserProfile from "../components/common/profile/UserProfile.jsx";
 import UserDashboard from "../pages/userpages/UserDashboard.jsx";
 import RecDashboard from "../components/recruiter/sections/RecDashboard.jsx";
+import AppliedJobs from "../components/user/AppliedJobs.jsx";
+import UserDash from "../components/user/UserDash.jsx";
 
 const router = createBrowserRouter([
   { path: "/login", element: <Login /> },
@@ -44,7 +46,7 @@ const router = createBrowserRouter([
         path: "dashboard",
         element: (
           <ProtectedRoute requiredRole="USER">
-            
+          <UserDash/>
           </ProtectedRoute>
         ),
       },
@@ -60,7 +62,7 @@ const router = createBrowserRouter([
         path: "appliedobs",
         element: (
           <ProtectedRoute requiredRole="USER">
-            
+            <AppliedJobs/>
           </ProtectedRoute>
         ),
       },

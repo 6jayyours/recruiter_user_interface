@@ -205,6 +205,11 @@ const UserProfile = () => {
 
   return (
     <div className="p-6 bg-white min-h-screen">
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold text-gray-800">
+          Dashboard / Profile Settings
+        </h2>
+      </div>
       <div className="overflow-x-auto">
         <div className="container mx-auto">
           <div className="grid grid-cols-1 gap-6">
@@ -263,21 +268,6 @@ const UserProfile = () => {
                     id="lastName"
                     name="lastName"
                     value={formData.lastName}
-                    onChange={handleChange}
-                    disabled={!isPersonalDetailsEditable}
-                  />
-                </div>
-                <div>
-                  <label className="font-medium" htmlFor="username">
-                    Username:<span className="text-red-600">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    className="w-full border border-gray-300 p-2 mt-2 rounded-md"
-                    placeholder="Username"
-                    id="username"
-                    name="username"
-                    value={formData.username}
                     onChange={handleChange}
                     disabled={!isPersonalDetailsEditable}
                   />

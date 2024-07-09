@@ -1,6 +1,6 @@
 import React from "react";
 
-const RecDashboard = () => {
+const UserDash = () => {
   return (
     <div className="p-6 bg-white min-h-screen">
       <div className="mb-8">
@@ -12,4 +12,4 @@ const RecDashboard = () => {
   );
 };
 
-export default RecDashboard;
+export default UserDash;

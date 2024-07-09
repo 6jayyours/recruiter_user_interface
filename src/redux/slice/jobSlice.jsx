@@ -2,6 +2,26 @@ import axios from "axios";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import {JOBS_SERVICE, PUBLIC_JOBS } from "../../constants/Url";
 
+export const getMyApps = createAsyncThunk(
+  'admin/getMyApps',
+  async (id, thunkAPI) => {
+    const { rejectWithValue, getState } = thunkAPI;
+    try {
+      // Get the token from the auth state
+      const state = getState();
+      const token = state.auth.token;
+      const response = await axios.get(`${JOBS_SERVICE}getMyApps?id=${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response ? error.response.data : error.message);
+    }
+  }
+);
+
 export const createJob = createAsyncThunk(
   "admin/createJob",
   async (jobData, thunkAPI) => {

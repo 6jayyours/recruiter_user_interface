@@ -219,21 +219,6 @@ const AdminProfile = () => {
                   />
                 </div>
                 <div>
-                  <label className="font-medium" htmlFor="username">
-                    Username:<span className="text-red-600">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    className="w-full border border-gray-300 p-2 mt-2 rounded-md"
-                    placeholder="Username"
-                    id="username"
-                    name="username"
-                    value={formData.username}
-                    onChange={handleChange}
-                    disabled={!isPersonalDetailsEditable}
-                  />
-                </div>
-                <div>
                   <label className="font-medium" htmlFor="email">
                     Email:<span className="text-red-600">*</span>
                   </label>
