@@ -178,12 +178,12 @@ export const addEdu = createAsyncThunk(
 
 export const fetchReceiverIdsBySenderId = createAsyncThunk(
   'chat/fetchReceiverIdsBySenderId',
-  async (senderId, { getState }) => {
+  async (id, { getState }) => {
     try {
       const state = getState();
       const token = state.auth.token;
       
-      const res = await axios.get(`${CHAT_URL}ws/receivers/${senderId}`, {
+      const res = await axios.get(`${CHAT_URL}ws/receivers/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -204,7 +204,7 @@ export const getUsersByIds = createAsyncThunk(
 
     try {
       const userIdsString = userIds.join(',');
-      const res = await axios.get(`${USER_SERVICE}/byIds/${userIdsString}`, {
+      const res = await axios.get(`${USER_SERVICE}byIds/${userIdsString}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

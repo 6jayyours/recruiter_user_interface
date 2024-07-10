@@ -16,7 +16,7 @@ const Chat = () => {
   const queryParams = new URLSearchParams(location.search);
   const toId = queryParams.get("userId");
 
-  
+
 
   const stompClient = useRef(null);
 
@@ -87,18 +87,16 @@ const Chat = () => {
     }
   };
 
-  const handleSelectContact = (contact) => {
-    setSelectedContact(contact); // Update selected contact
-  };
+
 
   return (
     <div className="flex h-[69vh] overflow-hidden mt-24 p-2">
       <div className="w-1/4 h-full border border-gray-300">
-        <Contacts onSelectContact={handleSelectContact} />
+        <Contacts to={toId} />
       </div>
       <div className="flex flex-col w-3/4 h-full">
         <div className="border border-gray-300">
-          {selectedContact && <Person person={selectedContact} />} {/* Pass selected contact to Person component */}
+         <Person to={toId}/>
         </div>
         <div className="flex-grow overflow-y-auto overflow-hidden border border-gray-300">
           <Message handleSend={handleSend} messageInput={messageInput} setMessageInput={setMessageInput} history={history} />

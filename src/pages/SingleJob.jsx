@@ -20,6 +20,12 @@ const handleModalClose = () => {
     setIsModalOpen(false); // Close the modal when it's closed
 };
 
+const handleSendMessage = (user) => {
+  console.log(user);
+  const queryString = `userId=${encodeURIComponent(user)}`;
+  window.location.href = `/message/user?${queryString}`;
+};
+
   const [job, setJob] = useState("");
   const [requirement, setRequirement] = useState("");
   const [responsibility, setResponsibility] = useState("");
@@ -130,7 +136,9 @@ const handleModalClose = () => {
             </h2>
           </div>
           <div className="w-1/4 text-right">
-            <button className="bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-800 transition duration-300">
+            <button 
+            onClick={() => handleSendMessage(job.user)}
+            className="bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-800 transition duration-300">
               Send recruiter a Message
             </button>
           </div>

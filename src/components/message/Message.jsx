@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
 
 const Message = ({ handleSend, messageInput, setMessageInput, history }) => {
-  
+  const id = useSelector((state) => state.auth.id);
 
   const [selectedFile, setSelectedFile] = useState(null);
   const [selectedAudio, setSelectedAudio] = useState(null);
   const [selectedDocument, setSelectedDocument] = useState(null);
+
+  const chatContainerRef = useRef(null);
 
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
@@ -20,9 +22,53 @@ const Message = ({ handleSend, messageInput, setMessageInput, history }) => {
     setSelectedDocument(event.target.files[0]);
   };
 
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop =
+        chatContainerRef.current.scrollHeight;
+    }
+  }, [history]);
+
+  const isSender = (messageSenderId) => {
+    return messageSenderId === id;
+  };
+
   return (
     <div className="flex flex-col h-full p-4 bg-white rounded-lg shadow-md">
-      
+      <div
+        ref={chatContainerRef}
+        className="mt-4 h-72 overflow-y-auto hide-scrollbar"
+      >
+        {history.map((message, index) => (
+          <div
+            key={index}
+            className={`flex items-start mb-4 ${
+              isSender(message.senderId) ? "justify-end" : "justify-start"
+            }`}
+          >
+            {!isSender(message.senderId) && (
+              <img src="" alt="" className="w-10 h-10 rounded-full mr-3" />
+            )}
+            <div className="flex flex-col">
+              <div className="flex items-center">
+                <span className="font-semibold mr-2"></span>
+              </div>
+              <div className="mt-1 text-gray-700">{message.content}</div>
+              <span className="text-xs text-gray-500">
+                {new Date(message.timestamp).toLocaleTimeString()}
+              </span>
+            </div>
+            {isSender(message.senderId) && (
+              <img
+                src={message.senderProfileImageUrl}
+                alt={message.senderFirstName}
+                className="w-10 h-10 rounded-full ml-3"
+              />
+            )}
+          </div>
+        ))}
+      </div>
+
       <div className="mt-4 flex items-center">
         <input
           type="text"
