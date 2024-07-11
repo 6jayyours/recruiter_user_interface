@@ -10,19 +10,31 @@ const Message = ({ handleSend, messageInput, setMessageInput, history, to }) => 
   const [selectedAudio, setSelectedAudio] = useState(null);
   const [selectedDocument, setSelectedDocument] = useState(null);
 
-  const [img, setImg] = useState(null);
+  const [senderImg, setSenderImg] = useState(null);
+  const [receiverImg, setReceiverImg] = useState(null);
 
   useEffect(() => {
     if (to) {
       dispatch(getUser(to))
         .then((response) => {
-          setImg(response.payload.profileImageUrl);
+          console.log(response.payload.profileImageUrl)
+          setSenderImg(response.payload.profileImageUrl);
         })
         .catch((error) => {
-          console.error('Error fetching users:', error);
+          console.error('Error fetching sender profile image:', error);
         });
     }
-  }, [dispatch, to]);
+    if (id) {
+      dispatch(getUser(id))
+        .then((response) => {
+          console.log(response.payload.profileImageUrl)
+          setReceiverImg(response.payload.profileImageUrl);
+        })
+        .catch((error) => {
+          console.error('Error fetching receiver profile image:', error);
+        });
+    }
+  }, [dispatch, id, to]);
 
   const chatContainerRef = useRef(null);
 
@@ -63,7 +75,7 @@ const Message = ({ handleSend, messageInput, setMessageInput, history, to }) => 
             }`}
           >
             {!isSender(message.senderId) && (
-              <img src={img} alt="" className="w-10 h-10 rounded-full mr-3" />
+              <img src={senderImg} alt="" className="w-10 h-10 rounded-full mr-3" />
             )}
             <div className="flex flex-col">
               <div className="flex items-center">
@@ -76,8 +88,8 @@ const Message = ({ handleSend, messageInput, setMessageInput, history, to }) => 
             </div>
             {isSender(message.senderId) && (
               <img
-                src={message.senderProfileImageUrl}
-                alt={message.senderFirstName}
+                src={receiverImg}
+                alt=""
                 className="w-10 h-10 rounded-full ml-3"
               />
             )}
