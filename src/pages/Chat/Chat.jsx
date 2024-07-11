@@ -23,7 +23,7 @@ const Chat = () => {
   useEffect(() => {
     // Connect to WebSocket
     const connect = () => {
-      const socket = new SockJS("http://68.183.247.3:8085/ws");
+      const socket = new SockJS("https://recruiterjobs.online/ws");
       stompClient.current = over(socket);
       stompClient.current.connect({}, onConnected, onError);
     };
