@@ -99,7 +99,7 @@ const Chat = () => {
          <Person to={toId}/>
         </div>
         <div className="flex-grow overflow-y-auto overflow-hidden border border-gray-300">
-          <Message handleSend={handleSend} messageInput={messageInput} setMessageInput={setMessageInput} history={history} />
+          <Message handleSend={handleSend} messageInput={messageInput} setMessageInput={setMessageInput} history={history}  to={toId} />
         </div>
       </div>
     </div>

@@ -1,12 +1,26 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 
-const Message = ({ handleSend, messageInput, setMessageInput, history }) => {
+const Message = ({ handleSend, messageInput, setMessageInput, history, to }) => {
   const id = useSelector((state) => state.auth.id);
 
   const [selectedFile, setSelectedFile] = useState(null);
   const [selectedAudio, setSelectedAudio] = useState(null);
   const [selectedDocument, setSelectedDocument] = useState(null);
+
+  const [img, setImg] = useState(null);
+
+  useEffect(() => {
+    if (to) {
+      dispatch(getUser(to))
+        .then((response) => {
+          setImg(response.payload.profileImageUrl);
+        })
+        .catch((error) => {
+          console.error('Error fetching users:', error);
+        });
+    }
+  }, [dispatch, to]);
 
   const chatContainerRef = useRef(null);
 
@@ -47,7 +61,7 @@ const Message = ({ handleSend, messageInput, setMessageInput, history }) => {
             }`}
           >
             {!isSender(message.senderId) && (
-              <img src="" alt="" className="w-10 h-10 rounded-full mr-3" />
+              <img src={img} alt="" className="w-10 h-10 rounded-full mr-3" />
             )}
             <div className="flex flex-col">
               <div className="flex items-center">
