@@ -1,8 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { getUser } from "../../redux/slice/authSlice";
 
 const Message = ({ handleSend, messageInput, setMessageInput, history, to }) => {
   const id = useSelector((state) => state.auth.id);
+  const dispatch = useDispatch();
 
   const [selectedFile, setSelectedFile] = useState(null);
   const [selectedAudio, setSelectedAudio] = useState(null);
