@@ -26,7 +26,7 @@ const ProgressBar = ({ status }) => {
           {/* Circle 1 - Applied */}
           <div className="flex flex-col items-center" style={{ left: `0%` }}>
             <div className="relative flex items-center justify-center w-10 h-10">
-              <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center bg-white border-emerald-600 mt-[-62px] ml-[-18px] ${status[0] === "applied" || status[0] === "responded" ? 'bg-emerald-600 border-emerald-600' : ''}`}>
+              <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center  mt-[-62px] ml-[-18px] ${status[0] === "applied" || status[0] === "responded" ? 'bg-emerald-600 border-emerald-600' : 'bg-white border-emerald-600'}`}>
                 {(status[0] === "applied" || status[0] === "responded") && <FaCheck className="text-white" />}
               </div>
             </div>
@@ -36,7 +36,7 @@ const ProgressBar = ({ status }) => {
           {/* Circle 2 - Application Sent */}
           <div className="flex flex-col items-center" style={{ left: `50%` }}>
             <div className="relative flex items-center justify-center w-10 h-10">
-              <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center bg-white border-emerald-600 mt-[-62px] mr-[-64px] ${status[0] === "applied" || status[0] === "responded" ? 'bg-emerald-600 border-emerald-600' : ''}`}>
+              <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center  mt-[-62px] mr-[-64px] ${status[0] === "applied" || status[0] === "responded" ? 'bg-emerald-600 border-emerald-600' : 'bg-white border-emerald-600'}`}>
                 {(status[0] === "applied" || status[0] === "responded") && <FaCheck className="text-white" />}
               </div>
             </div>
@@ -46,7 +46,7 @@ const ProgressBar = ({ status }) => {
           {/* Circle 3 - Recruiter Action */}
           <div className="flex flex-col items-center" style={{ left: `100%` }}>
             <div className="relative flex items-center justify-center w-10 h-10">
-              <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center bg-white border-emerald-600 mt-[-62px] mr-[-68px] ${status[0] === "responded" ? 'bg-emerald-600 border-emerald-600' : ''}`}>
+              <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center  mt-[-62px] mr-[-68px] ${status[0] === "responded" ? 'bg-emerald-600 border-emerald-600' : 'bg-white border-emerald-600'}`}>
                 {status[0] === "responded" && <FaCheck className="text-white" />}
               </div>
             </div>

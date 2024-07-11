@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { activateUser, listUsers } from "../../redux/slice/adminSlice";
 import toast from "react-hot-toast";
+import BlockModal from "./sections/BlockModal";
 
 const Userslist = () => {
   const dispatch = useDispatch();
@@ -13,11 +14,24 @@ const Userslist = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(6); // Adjust as needed
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [user, setUser] = useState(null);
+  const [reason, setReason] = useState("");
+
+  const openModal = (user) => {
+    setIsModalOpen(true);
+    setUser(user);
+  };
+
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
   useEffect(() => {
     const formData = { role: "USER" };
     dispatch(listUsers(formData))
       .then((response) => {
-        console.log(response.payload)
         setCandidates(response.payload);
         setFilteredCandidates(response.payload);
       })
@@ -75,8 +89,8 @@ const Userslist = () => {
     }
   };
 
-  function handleUserStatus(id) {
-    dispatch(activateUser(id))
+  function handleUserStatus(id,reason) {
+    dispatch(activateUser({id,reason}))
       .then((response) => {
         toast.success("User status changed.");
         setFilteredCandidates((prevCandidates) =>
@@ -169,7 +183,8 @@ const Userslist = () => {
                 </td>
                 <td className="py-3 px-4">
                   <button
-                    onClick={() => handleUserStatus(user.id)}
+                   onClick={() => user.status ?  openModal(user.id) : handleUserStatus(user.id,"")}
+                    // onClick={() => handleUserStatus(user.id)}
                     className={`py-1 px-3 rounded ${
                       user.status
                         ? "bg-red-500 hover:bg-red-600"
@@ -203,6 +218,16 @@ const Userslist = () => {
           </button>
         </div>
       </div>
+      {isModalOpen && (
+        <BlockModal
+          isOpen={isModalOpen}
+          onRequestClose={closeModal}
+          setReason={setReason}
+          reason={reason}
+          id={user}
+          handleUserStatus={handleUserStatus}
+        />
+      )}
     </div>
   );
 };

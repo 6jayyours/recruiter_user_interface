@@ -82,6 +82,8 @@ const Login = () => {
               navigate("/");
             }
           } else {
+            console.log(response.payload.message)
+            console.log(response.payload.blockReason)
             setLoginError(response.payload.message);
           }
         })

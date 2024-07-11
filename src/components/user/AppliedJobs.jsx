@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import ProgressBar from "./ProgressBar";
 import { useDispatch, useSelector } from "react-redux";
 import { getMyApps } from "../../redux/slice/jobSlice";
+import { Link } from "react-router-dom";
 
 const AppliedJobs = () => {
   const dispatch = useDispatch();
@@ -60,7 +61,11 @@ const AppliedJobs = () => {
                 <ProgressBar status={[app.action]} />
               </div>
               <div className="w-1/3 flex flex-col items-center text-center">
-           
+                <Link to={`/jobdetail/${app.jobId}`}>
+                <button className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-200">
+                    View Job
+                  </button>
+                </Link>
               </div>
               
             </div>

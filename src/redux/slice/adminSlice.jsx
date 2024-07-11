@@ -67,16 +67,20 @@ export const getAllApps = createAsyncThunk(
 
 export const activateUser = createAsyncThunk(
   'admin/activateUser',
-  async (id , thunkAPI) => {
+  async ({ id, reason }, thunkAPI) => {
     const { rejectWithValue, getState } = thunkAPI;
     try {
       // Get the token from the auth state
       const state = getState();
       const token = state.auth.token;
       const response = await axios.put(`${ADMIN_URL}activate/${id}`, {},{
+        params: {
+          reason: reason 
+        },
         headers: {
           Authorization: `Bearer ${token}`,
         },
+        
       });
       return response.data;
     } catch (error) {

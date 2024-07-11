@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 import navLogo from '../../assets/logo.png'
 import { PiSuitcaseSimpleFill } from 'react-icons/pi'
 import { MdLogout, MdManageAccounts } from 'react-icons/md'
-import { FaTachometerAlt } from 'react-icons/fa';
+import { FaTachometerAlt, FaHome  } from 'react-icons/fa';
 
 const UserSidebar = () => {
     const dispatch = useDispatch();
@@ -51,6 +51,13 @@ const UserSidebar = () => {
           >
             <PiSuitcaseSimpleFill className="mr-2" />
             <h2 className="text-lg font-semibold">Applied Jobs</h2>
+          </Link>
+          <Link
+            to="/jobs"
+            className="flex items-center mb-4 hover:bg-gray-600 transition-all duration-300 cursor-pointer p-2 rounded"
+          >
+            <FaHome  className="mr-2" />
+            <h2 className="text-lg font-semibold">Home</h2>
           </Link>
         </div>
       </div>

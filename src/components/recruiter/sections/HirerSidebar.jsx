@@ -6,7 +6,7 @@ import { MdLibraryAdd, MdLogout, MdManageAccounts } from 'react-icons/md'
 import { RiMailSendLine } from 'react-icons/ri'
 import { logoutUser } from '../../../redux/slice/authSlice'
 import { useDispatch } from 'react-redux'
-import { FaTachometerAlt } from 'react-icons/fa'
+import { FaHome, FaTachometerAlt } from 'react-icons/fa'
 
 const HirerSidebar = () => {
   const dispatch = useDispatch();
@@ -66,6 +66,13 @@ const HirerSidebar = () => {
           >
             <MdLibraryAdd className="mr-2" />
             <h2 className="text-lg font-semibold">Post Job</h2>
+          </Link>
+          <Link
+            to="/recruiter/candidates"
+            className="flex items-center mb-4 hover:bg-gray-600 transition-all duration-300 cursor-pointer p-2 rounded"
+          >
+            <FaHome  className="mr-2" />
+            <h2 className="text-lg font-semibold">Home</h2>
           </Link>
         </div>
       </div>
