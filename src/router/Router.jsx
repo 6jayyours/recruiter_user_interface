@@ -33,6 +33,7 @@ import UserDashboard from "../pages/userpages/UserDashboard.jsx";
 import RecDashboard from "../components/recruiter/sections/RecDashboard.jsx";
 import AppliedJobs from "../components/user/AppliedJobs.jsx";
 import UserDash from "../components/user/UserDash.jsx";
+import MyJobApplications from "../components/recruiter/sections/MyJobApplications.jsx";
 
 const router = createBrowserRouter([
   { path: "/login", element: <Login /> },
@@ -204,14 +205,6 @@ const router = createBrowserRouter([
     element: <HirerDashboard />,
     children: [
       {
-        path: "dashboard",
-        element: (
-          <ProtectedRoute requiredRole="RECRUITER">
-            <RecDashboard />
-          </ProtectedRoute>
-        ),
-      },
-      {
         path: "profile",
         element: (
           <ProtectedRoute requiredRole="RECRUITER">
@@ -240,6 +233,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute requiredRole="RECRUITER">
             <PostJob />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "jobapplications/:id",
+        element: (
+          <ProtectedRoute requiredRole="RECRUITER">
+            <MyJobApplications />
           </ProtectedRoute>
         ),
       },

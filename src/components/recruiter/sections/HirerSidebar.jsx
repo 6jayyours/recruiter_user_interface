@@ -27,16 +27,6 @@ const HirerSidebar = () => {
       </div>
       <div className="flex-grow">
         <div className="px-4 py-2">
-        <Link
-            to="/recruiter/dashboard"
-            className="flex items-center justify-between mb-4 hover:bg-gray-600 transition-all duration-300 cursor-pointer p-2 rounded"
-          >
-            <div className="flex items-center">
-              <FaTachometerAlt className="mr-2" />
-              <h2 className="text-lg font-semibold">Dashboard</h2>
-            </div>
-            <span className="bg-indigo-700 rounded-md px-2 text-sm">NEW</span>
-          </Link>
           <Link
             to="/recruiter/profile"
             className="flex items-center justify-between mb-4 hover:bg-gray-600 transition-all duration-300 cursor-pointer p-2 rounded"

@@ -58,15 +58,19 @@ const MyJobs = () => {
                   <BsGeoAlt className="text-green-600 mr-1" />
                   <span className="text-gray-600">
                     {job.city}, {job.state}, {job.country}
+                    {job.id}
                   </span>
                 </div>
               </div>
-              <div className="flex items-center w-1/3 justify-end">
-                <Link to={`/jobapplications/${job.id}`}>
-                  <button className="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-md">
+              <div className="flex flex-col items-center w-1/3 justify-end space-y-4">
+                <Link to={`/recruiter/jobapplications/${job.id}`}>
+                  <button className="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-md w-56">
                     View Applications
                   </button>
                 </Link>
+                <button className="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-md w-56">
+                  Close Job
+                </button>
               </div>
             </div>
           </div>

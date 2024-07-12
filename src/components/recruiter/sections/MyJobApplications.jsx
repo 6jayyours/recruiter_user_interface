@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  getMyJobApps,
-  updateApplicationStatus,
-} from "../../redux/slice/jobSlice";
-import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { Link, useParams } from "react-router-dom";
+import {getSingleJobApps,} from "../../../redux/slice/jobSlice"
 
-const MyApplications = () => {
-  const id = useSelector((state) => state.auth.id);
+
+const MyJobApplications = () => {
+  const { id } = useParams();
   const [currentPage, setCurrentPage] = useState(1);
   const [apps, setApps] = useState([]);
   const appsPerPage = 6;
@@ -15,7 +13,7 @@ const MyApplications = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(getMyJobApps(id))
+    dispatch(getSingleJobApps(id))
       .then((response) => {
         console.log(response.payload);
         setApps(response.payload);
@@ -56,7 +54,7 @@ const MyApplications = () => {
     <div className="p-6 bg-white min-h-screen">
       <div className="mb-8">
         <h2 className="text-2xl font-bold text-gray-800">
-          Dashboard / Applications
+          Job / Applications
         </h2>
       </div>
       <div className="overflow-x-auto">
@@ -135,4 +133,4 @@ const MyApplications = () => {
   );
 };
 
-export default MyApplications;
+export default MyJobApplications;
