@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addExp } from "../../../redux/slice/authSlice";
 import toast from "react-hot-toast";
 
-const ExperienceModal = ({ onClose }) => {
+const ExperienceModal = ({ onClose,setExperiences }) => {
   const dispatch = useDispatch();
   const id = useSelector((state) => state.auth.id);
 
@@ -43,6 +43,13 @@ const ExperienceModal = ({ onClose }) => {
       .then((response) => {
         if (response.type === "auth/addExp/fulfilled") {
           toast.success("Experience added successfully");
+          setExperiences(prevExperiences => [...prevExperiences, {
+            id: response.payload.id,
+            companyName,
+            role,
+            startDate,
+            endDate
+          }]);
           onClose();
         } else {
           toast.error("Failed to add experience");

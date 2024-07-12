@@ -1,42 +1,76 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useParams } from "react-router";
-import { getUser } from "../../../redux/slice/authSlice";
-import profImg from "../../../assets/admin.jpg";
 import {
-  FaLinkedin,
-  FaInstagram,
-  FaFacebook,
-  FaWhatsapp,
-  FaGoogle,
-  FaTwitter,
-} from "react-icons/fa";
+  getEdu,
+  getExp,
+  getSkill,
+  getUser,
+} from "../../../redux/slice/authSlice";
+import profImg from "../../../assets/admin.jpg";
+import { FaEnvelope, FaPhone } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const Profile = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const [candidate, setCandidate] = useState("");
+  const [experiences, setExperiences] = useState([]);
+  const [educations, setEducations] = useState([]);
+  const [skills, setSkills] = useState([]);
+
+  useEffect(() => {
+    dispatch(getExp(id))
+      .then((response) => {
+        setExperiences(response.payload);
+      })
+      .catch((error) => {
+        console.error("Error fetching experience:", error);
+      });
+  }, [dispatch, id]);
+
+  useEffect(() => {
+    dispatch(getEdu(id))
+      .then((response) => {
+        setEducations(response.payload);
+      })
+      .catch((error) => {
+        console.error("Error fetching education:", error);
+      });
+  }, [dispatch, id]);
+
+  useEffect(() => {
+    dispatch(getSkill(id))
+      .then((response) => {
+        const skillsArray = response.payload.flatMap((item) =>
+          item.skills.split(",").map((skill) => skill.trim())
+        );
+        setSkills(skillsArray);
+      })
+      .catch((error) => {
+        console.error("Error fetching skills:", error);
+      });
+  }, [dispatch, id]);
 
   useEffect(() => {
     dispatch(getUser(id))
       .then((response) => {
-        console.log(response.payload);
         setCandidate(response.payload);
       })
       .catch((error) => {
-        console.error("error fetching user", error);
+        console.error("Error fetching user:", error);
       });
   }, [dispatch, id]);
 
   const handleSendMessage = () => {
     const queryString = `userId=${encodeURIComponent(id)}`;
     window.location.href = `/message/recruiter?${queryString}`;
-};
+  };
 
   return (
-    <div className="h-screen mt-10">
-      <div className="max-w-6xl mx-auto px-6 py-10 bg-white rounded-lg">
-        <div className="flex flex-col md:flex-row items-center md:items-start mb-10 px-11 py-6 shadow-lg">
+    <div className="min-h-screen bg-gray-100 py-10">
+      <div className="max-w-6xl mx-auto px-6 py-10 bg-white rounded-lg shadow-lg">
+        <div className="flex flex-col md:flex-row items-center md:items-start mb-10 px-11 py-6 shadow-md bg-indigo-50 rounded-lg">
           <div className="flex-shrink-0 mb-6 md:mb-0 md:mr-8">
             <img
               src={candidate.profileImageUrl || profImg}
@@ -45,106 +79,85 @@ const Profile = () => {
             />
           </div>
           <div className="text-center md:text-left flex-grow">
-            <h1 className="text-3xl font-bold text-gray-800 mb-4">
+            <h1 className="text-3xl font-bold text-gray-800 mb-2">
               {candidate.firstName} {candidate.lastName}
             </h1>
-            <h2 className="text-xl font-medium text-gray-600 mb-4">
+            <h2 className="text-xl font-medium text-gray-600 mb-2">
               Software Developer
             </h2>
             <div className="flex justify-center md:justify-start gap-4 text-gray-600 mb-4">
               <span>{candidate.gender}</span>
-              <span>{candidate.place}</span>
             </div>
           </div>
           <div className="mt-4 md:mt-0">
-            <button className="px-4 py-2 bg-indigo-600 text-white rounded-lg shadow-md" onClick={handleSendMessage}>
+            <button
+              className="px-4 py-2 bg-indigo-600 text-white rounded-lg shadow-md hover:bg-indigo-700 transition duration-300"
+              onClick={handleSendMessage}
+            >
               Send Message
             </button>
           </div>
         </div>
-        <div className="flex flex-col md:flex-row">
+        <div className="flex flex-col md:flex-row px-10">
           <div className="w-full md:w-3/4 mb-10 md:mb-0 pr-0 md:pr-10">
-            <div className="mb-8">
-              <h1 className="text-2xl font-semibold text-indigo-600 mb-2">
-                About
-              </h1>
-              <p className="text-gray-700">dkjshjfgskhdfgbehfgihu</p>
-            </div>
             <div className="mb-8">
               <h1 className="text-2xl font-semibold text-indigo-600 mb-2">
                 Experience
               </h1>
-              <p className="text-gray-700">dsjhfgduhgfuhy</p>
+              <ul className="list-disc list-inside text-gray-700 space-y-4">
+                {experiences.map((exp, index) => (
+                  <li key={index} className="bg-indigo-100 p-4 rounded-lg shadow-sm">
+                    <span className="font-semibold">{exp.role}</span> at{" "}
+                    <span className="text-indigo-500">{exp.companyName}</span> (
+                    {exp.startDate} - {exp.endDate})
+                    <p className="mt-2 text-gray-600">{exp.description}</p>
+                  </li>
+                ))}
+              </ul>
             </div>
             <div className="mb-8">
               <h1 className="text-2xl font-semibold text-indigo-600 mb-2">
                 Education
               </h1>
-              <p className="text-gray-700">Education details</p>
+              <ul className="list-disc list-inside text-gray-700 space-y-4">
+                {educations.map((edu, index) => (
+                  <li key={index} className="bg-indigo-100 p-4 rounded-lg shadow-sm">
+                    <span className="font-semibold">{edu.degree}</span> from{" "}
+                    <span className="text-indigo-500">{edu.collegeName}</span> (
+                    {edu.year})
+                    <p className="mt-2 text-gray-600">{edu.description}</p>
+                  </li>
+                ))}
+              </ul>
             </div>
             <div className="mb-8">
               <h1 className="text-2xl font-semibold text-indigo-600 mb-2">
                 Skills
               </h1>
-              <p className="text-gray-700">Skills</p>
-            </div>
-          </div>
-          <div className="w-full md:w-1/4">
-            <div className="mb-8">
-              <h1 className="text-2xl font-semibold text-indigo-600 mb-2">
-                Personal Details
-              </h1>
-              <div className="text-gray-700">
-                <div>Email: {candidate.email}</div>
-                <div>Mobile: 1234567890</div>
-                <div>Date of Birth: dd/mm/yyyy</div>
-                <div>City: City Name</div>
-                <div>State: State Name</div>
-                <div>Country: Country Name</div>
-                <div>Pincode: 123456</div>
+              <div className="flex flex-wrap gap-2">
+                {skills.map((skill, index) => (
+                  <span
+                    key={index}
+                    className="bg-indigo-500 text-white px-4 py-2 rounded-md shadow hover:bg-indigo-600 transition duration-300"
+                  >
+                    {skill}
+                  </span>
+                ))}
               </div>
             </div>
-            <div>
+            <div className="mb-8">
               <h1 className="text-2xl font-semibold text-indigo-600 mb-2">
-                Socials
+                Contact Details
               </h1>
-              <div className="flex gap-3">
-                <a
-                  href="#google"
-                  className="text-gray-400 hover:text-red-500 p-3 rounded-md bg-gray-800 hover:bg-gray-600 shadow-md"
-                >
-                  <FaGoogle size={20} />
-                </a>
-                <a
-                  href="#facebook"
-                  className="text-gray-400 hover:text-blue-600 p-3 rounded-md bg-gray-800 hover:bg-gray-600 shadow-md"
-                >
-                  <FaFacebook size={20} />
-                </a>
-                <a
-                  href="#twitter"
-                  className="text-gray-400 hover:text-blue-400 p-3 rounded-md bg-gray-800 hover:bg-gray-600 shadow-md"
-                >
-                  <FaTwitter size={20} />
-                </a>
-                <a
-                  href="#instagram"
-                  className="text-gray-400 hover:text-pink-500 p-3 rounded-md bg-gray-800 hover:bg-gray-600 shadow-md"
-                >
-                  <FaInstagram size={20} />
-                </a>
-                <a
-                  href="#linkedin"
-                  className="text-gray-400 hover:text-blue-700 p-3 rounded-md bg-gray-800 hover:bg-gray-600 shadow-md"
-                >
-                  <FaLinkedin size={20} />
-                </a>
-                <a
-                  href="#whatsapp"
-                  className="text-gray-400 hover:text-green-500 p-3 rounded-md bg-gray-800 hover:bg-gray-600 shadow-md"
-                >
-                  <FaWhatsapp size={20} />
-                </a>
+              <div className="flex flex-wrap gap-4 items-center text-gray-700">
+                <div className="flex items-center gap-2">
+                  <FaEnvelope className="text-indigo-600" />
+                  <span>{candidate.email}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <FaPhone className="text-indigo-600" />
+                  <span>{candidate.mobile}</span>
+                </div>
               </div>
             </div>
           </div>
