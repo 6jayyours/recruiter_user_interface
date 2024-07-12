@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getUser, updateUser } from "../../redux/slice/authSlice";
+import { changePass, getUser, updateUser } from "../../redux/slice/authSlice";
 import { getPicture, uploadProfilePicture } from "../../redux/slice/adminSlice";
 
 const AdminProfile = () => {
@@ -12,6 +12,7 @@ const AdminProfile = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [profileImage, setProfileImage] = useState(null);
+  const [passError, setPassError] = useState(null);
 
   const [isPersonalDetailsEditable, setIsPersonalDetailsEditable] = useState(false);
   const [isContactInfoEditable, setIsContactInfoEditable] = useState(false);
@@ -139,12 +140,34 @@ const AdminProfile = () => {
   };
 
   const handleEditPassword = () => {
-    setIsPasswordEditable(false);
+    setIsPasswordEditable(true);
   };
 
   const handleSubmitPassword = () => {
-    setIsPasswordEditable(false); // Disable editing after submit
-    // Handle submit logic for password change
+    console.log(formData.oldPassword,formData.newPassword,formData.confirmPassword)
+    if (formData.newPassword !== formData.confirmPassword) {
+      
+      return;
+    }
+
+    const passData = {
+      oldPassword: formData.oldPassword,
+      newPassword: formData.newPassword,
+      id,
+    };
+
+    if(id) {
+      dispatch(changePass(passData))
+      .then(response => {
+        console.log("Password updated successfully:", response);
+        // Handle success, e.g., disable editing after successful update
+        setIsPasswordEditable(false);
+      })
+      .catch(error => {
+        console.error("Error updating password:", error);
+        // Handle error, e.g., show error message
+      });
+    }
   };
 
   return (

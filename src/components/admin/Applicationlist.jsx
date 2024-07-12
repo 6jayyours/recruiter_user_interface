@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { getAllApps } from '../../redux/slice/adminSlice';
+import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { getAllApps } from "../../redux/slice/adminSlice";
 
 const Applicationlist = () => {
   const dispatch = useDispatch();
   const [apps, setApps] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const appsPerPage = 6;
 
@@ -17,15 +17,15 @@ const Applicationlist = () => {
         setApps(response.payload);
       })
       .catch((error) => {
-        console.error('Failed to fetch applications:', error);
+        console.error("Failed to fetch applications:", error);
       });
   }, [dispatch]);
 
   // Filter applications based on search term and status filter
-  const filteredApps = apps.filter(app => {
+  const filteredApps = apps.filter((app) => {
     return (
       app.jobTitle.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      (statusFilter ? app.status === statusFilter : true)
+      (statusFilter ? app.status.toLowerCase() === statusFilter.toLowerCase() : true)
     );
   });
 
@@ -40,7 +40,7 @@ const Applicationlist = () => {
   // Reset currentPage to 1 when search term changes
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm]);
+  }, [searchTerm, statusFilter]);
 
   return (
     <div className="p-4">
@@ -61,8 +61,9 @@ const Applicationlist = () => {
           className="p-2 border border-gray-300 rounded"
         >
           <option value="">All Statuses</option>
-          <option value="Active">Active</option>
-          <option value="Inactive">Inactive</option>
+          <option value="Accepted">Accepted</option>
+          <option value="open">Open</option>
+          <option value="Rejected">Rejected</option>
         </select>
       </div>
       <div className="overflow-x-auto">
@@ -82,7 +83,15 @@ const Applicationlist = () => {
                 <td className="py-3 px-4">{app.postedBy}</td>
                 <td className="py-3 px-4">{app.applicant}</td>
                 <td className="py-3 px-4">
-                  <span className={`inline-block px-2 py-1 rounded text-white ${app.status === 'Active' ? 'bg-green-500' : 'bg-red-500'}`}>
+                  <span
+                    className={`inline-block px-2 py-1 rounded text-white ${
+                      app.status === "Accepted"
+                        ? "bg-green-500"
+                        : app.status === "open"
+                        ? "bg-blue-500"
+                        : "bg-red-500"
+                    }`}
+                  >
                     {app.status}
                   </span>
                 </td>
@@ -99,7 +108,9 @@ const Applicationlist = () => {
         >
           Previous
         </button>
-        <span>Page {currentPage} of {totalPages}</span>
+        <span>
+          Page {currentPage} of {totalPages}
+        </span>
         <button
           onClick={() => handlePageChange(currentPage + 1)}
           disabled={currentPage === totalPages}

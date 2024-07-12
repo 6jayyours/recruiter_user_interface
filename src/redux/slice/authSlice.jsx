@@ -138,6 +138,18 @@ export const addExp = createAsyncThunk(
   }
 );
 
+export const changePass = createAsyncThunk(
+  "auth/changePass",
+  async (passData, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(`${AUTH_URL}changePassword`, passData);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data); 
+    }
+  }
+);
+
 export const getExp = createAsyncThunk(
   "auth/getExp",
   async (id, { getState, rejectWithValue }) => {

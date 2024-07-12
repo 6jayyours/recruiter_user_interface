@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { activateUser, listUsers } from "../../redux/slice/adminSlice";
 import ImageModal from "./sections/ImageModal";
 import toast from "react-hot-toast";
+import BlockModal from "./sections/BlockModal";
 
 const Recruiterslist = () => {
   const dispatch = useDispatch();
@@ -15,6 +16,22 @@ const Recruiterslist = () => {
   const [itemsPerPage] = useState(6);
   const [showModal, setShowModal] = useState(false);
   const [selectedImageUrl, setSelectedImageUrl] = useState("");
+
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [user, setUser] = useState(null);
+  const [reason, setReason] = useState("");
+
+  const openModal = (user) => {
+    setIsModalOpen(true);
+    setUser(user);
+  };
+
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
 
   const handleImageClick = (imageUrl) => {
     setSelectedImageUrl(imageUrl);
@@ -85,8 +102,8 @@ const Recruiterslist = () => {
     }
   };
 
-  function handleUserStatus(id) {
-    dispatch(activateUser(id))
+  function handleUserStatus(id,reason) {
+    dispatch(activateUser({id,reason}))
       .then((response) => {
         toast.success("User status changed.");
         setFilteredRecruiters((prevCandidates) =>
@@ -177,7 +194,7 @@ const Recruiterslist = () => {
                 </td>
                 <td className="py-3 px-4">
                   <button
-                    onClick={() => handleUserStatus(recruiter.id)}
+                    onClick={() => recruiter.status ?  openModal(recruiter.id) : handleUserStatus(recruiter.id,"")}
                     className={`py-1 px-3 rounded ${
                       recruiter.status
                         ? "bg-red-500 hover:bg-red-600"
@@ -216,6 +233,16 @@ const Recruiterslist = () => {
           showModal={showModal}
           imageUrl={selectedImageUrl}
           onClose={handleCloseModal}
+        />
+      )}
+      {isModalOpen && (
+        <BlockModal
+          isOpen={isModalOpen}
+          onRequestClose={closeModal}
+          setReason={setReason}
+          reason={reason}
+          id={user}
+          handleUserStatus={handleUserStatus}
         />
       )}
     </div>
