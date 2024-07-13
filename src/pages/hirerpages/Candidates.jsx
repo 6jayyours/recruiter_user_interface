@@ -12,20 +12,10 @@ const Candidates = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
   const [query, setQuery] = useState('');
-  const [selectedDegree, setSelectedDegree] = useState('');
-  const [selectedExperience, setSelectedExperience] = useState('');
   const [selectedLocation, setSelectedLocation] = useState('');
 
   const handleInputChange = (e) => {
     setQuery(e.target.value);
-  };
-
-  const handleChange = (e) => {
-    setSelectedDegree(e.target.value);
-  };
-
-  const handleExpChange = (e) => {
-    setSelectedExperience(e.target.value);
   };
 
   const handleLocChange = (e) => {
@@ -34,9 +24,7 @@ const Candidates = () => {
 
   const filteredCandidates = candidates.filter((candidate) => {
     return (
-      candidate.username.toLowerCase().includes(query.toLowerCase()) &&
-      (!selectedDegree || (candidate.degree && candidate.degree.toLowerCase() === selectedDegree.toLowerCase())) &&
-      (!selectedExperience || (candidate.totalExperience && candidate.totalExperience.toString() === selectedExperience)) &&
+      candidate.position.toLowerCase().includes(query.toLowerCase()) &&
       (!selectedLocation || (candidate.location && candidate.location.toLowerCase() === selectedLocation.toLowerCase()))
     );
   });
@@ -68,9 +56,21 @@ const Candidates = () => {
       });
   }, [dispatch]);
 
+  const handleSearch = (e) => {
+    e.preventDefault();
+    // Perform search logic here if needed
+    // You can dispatch an action to filter candidates based on position or other criteria
+  };
+
   return (
     <div>
-      <HBanner />
+      <HBanner
+        query={query}
+        handleInputChange={handleInputChange}
+        selectedLocation={selectedLocation}
+        handleLocChange={handleLocChange}
+        handleSearch={handleSearch}
+      />
       <div className="bg-[#F1F5F8] px-4 py-12">
         <div className="min-h-96">
           <Candidatelist candidates={currentCandidates} />

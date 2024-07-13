@@ -12,6 +12,8 @@ const Candidatelist = ({ candidates }) => {
           lastname={user.lastName}
           profileImgPath={user.profileImageUrl}
           role={user.position}
+          loc={user.location}
+          gender={user.gender}
         />
       ))}
     </div>
