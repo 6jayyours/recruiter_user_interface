@@ -4,7 +4,7 @@ import { FaRegClock,FaUser, FaBuilding } from "react-icons/fa";
 import { GiMoneyStack } from "react-icons/gi";
 import { CgOrganisation } from "react-icons/cg";
 import { useDispatch, useSelector } from "react-redux";
-import { getJob } from "../redux/slice/jobSlice";
+import { checkJobExists, getJob } from "../redux/slice/jobSlice";
 import { useParams } from "react-router";
 import ApplyModal from "../components/user/modals/ApplyModal";
 
@@ -38,7 +38,6 @@ const handleSendMessage = (user) => {
   useEffect(() => {
     dispatch(getJob(id))
       .then(response => {
-        console.log(response.payload)
         setJob(response.payload);
         setRequirement(response.payload.requirements);
         setResponsibility(response.payload.responsibilities); // Ensure this line is added
@@ -47,6 +46,20 @@ const handleSendMessage = (user) => {
         console.error('error fetching jobs', error);
       });
   }, [dispatch, id]); // Ensure `id` is added to the dependency array
+
+
+  const [apply, setApply] = useState(false);
+
+  useEffect(() => {
+    dispatch(checkJobExists({ jobId:id, appliedBy: userId }))
+    .then((response) => {
+      if(response.payload){
+        setApply(response.payload)
+      }
+    })
+    .catch((error) => {
+    });
+  }, [dispatch, id, userId]);
 
   return (
     <div className="mx-auto min-h-screen flex flex-col justify-center items-center p-4 md:p-8 lg:p-16 mt-12 md:mt-4 bg-gray-50">
@@ -77,11 +90,20 @@ const handleSendMessage = (user) => {
             </div>
           </div>
           <div>
-            <button
+          {apply ? (
+        <div className="bg-green-200 text-green-800 px-4 py-2 rounded-lg">
+          Already Applied
+        </div>
+      ) : (
+        <div>
+          <button
             onClick={handleApply}
-             className="bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-800 transition duration-300">
-              Apply For Job
-            </button>
+            className="bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-800 transition duration-300"
+          >
+            Apply For Job
+          </button>
+        </div>
+      )}
           </div>
         </div>
 
@@ -124,7 +146,7 @@ const handleSendMessage = (user) => {
               ))}
             </ul>
           </div>
-          <ApplyModal isOpen={isModalOpen} onClose={handleModalClose} jobId={id} userId={userId} />
+          <ApplyModal isOpen={isModalOpen} onClose={handleModalClose} jobId={id} userId={userId} setApply={setApply}/>
         </div>
         <div className="p-6 flex items-center justify-between border-t border-gray-200">
           <div className="w-3/4">

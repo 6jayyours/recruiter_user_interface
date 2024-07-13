@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { applyForJob } from '../../../redux/slice/jobSlice';
 
-const ApplyModal = ({ isOpen, onClose, jobId }) => {
+const ApplyModal = ({ isOpen, onClose, jobId,setApply }) => {
   const [message, setMessage] = useState('');
   const [file, setFile] = useState(null);
 
@@ -31,6 +31,7 @@ const ApplyModal = ({ isOpen, onClose, jobId }) => {
       .then((response) => {
         console.log('Application submitted successfully:', response.payload);
         onClose(); // Close modal after successful submission
+        setApply(true);
       })
       .catch((error) => {
         console.error('Error applying for job:', error);

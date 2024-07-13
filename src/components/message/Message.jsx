@@ -106,14 +106,14 @@ const Message = ({ handleSend, messageInput, setMessageInput, history, to }) => 
           className="flex-grow p-2 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           placeholder="Type a message"
         />
-        <input
+        {/* <input
           type="file"
           onChange={handleFileChange}
           accept="image/*,video/*"
           className="hidden"
           id="file-input"
-        />
-        <label
+        /> */}
+        {/* <label
           htmlFor="file-input"
           className="p-2 bg-gray-200 text-gray-700 hover:bg-gray-300 cursor-pointer"
         >
@@ -144,7 +144,7 @@ const Message = ({ handleSend, messageInput, setMessageInput, history, to }) => 
           className="p-2 bg-gray-200 text-gray-700 hover:bg-gray-300 cursor-pointer"
         >
           📄
-        </label>
+        </label> */}
         <button
           onClick={handleSend}
           className="p-2 bg-blue-500 text-white rounded-r-lg hover:bg-blue-600"

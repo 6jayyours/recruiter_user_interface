@@ -185,6 +185,29 @@ export const updateApplicationStatus = createAsyncThunk(
   }
 );
 
+export const checkJobExists = createAsyncThunk(
+  'jobs/checkJobExists',
+  async ({ jobId, appliedBy }, { rejectWithValue, getState }) => {
+    try {
+      const state = getState();
+      const token = state.auth.token; // Adjust according to your state structure
+
+      const response = await axios.get(`${JOBS_SERVICE}exists`, {
+        params: { jobId, appliedBy },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response ? error.response.data : error.message
+      );
+    }
+  }
+);
+
 
 const initialState = {};
 
