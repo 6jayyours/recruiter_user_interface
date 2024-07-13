@@ -68,9 +68,6 @@ const MyJobs = () => {
                     View Applications
                   </button>
                 </Link>
-                <button className="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-md w-56">
-                  Close Job
-                </button>
               </div>
             </div>
           </div>
