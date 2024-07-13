@@ -8,7 +8,7 @@ import {
   getUser,
 } from "../../../redux/slice/authSlice";
 import profImg from "../../../assets/admin.jpg";
-import { FaEnvelope, FaPhone } from "react-icons/fa";
+import { FaEnvelope, FaMapPin, FaPhone } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
 const Profile = () => {
@@ -83,7 +83,7 @@ const Profile = () => {
               {candidate.firstName} {candidate.lastName}
             </h1>
             <h2 className="text-xl font-medium text-gray-600 mb-2">
-              Software Developer
+              {candidate.position}
             </h2>
             <div className="flex justify-center md:justify-start gap-4 text-gray-600 mb-4">
               <span>{candidate.gender}</span>
@@ -157,6 +157,10 @@ const Profile = () => {
                 <div className="flex items-center gap-2">
                   <FaPhone className="text-indigo-600" />
                   <span>{candidate.mobile}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <FaMapPin className="text-indigo-600" />
+                  <span>{candidate.location}</span>
                 </div>
               </div>
             </div>

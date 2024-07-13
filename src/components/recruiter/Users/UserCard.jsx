@@ -1,8 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const UserCard = ({ id, firstname, lastname,profileImgPath }) => {
-  console.log(profileImgPath)
+const UserCard = ({ id, firstname, lastname,profileImgPath,role }) => {
   return (
     <div className="group bg-white overflow-hidden rounded-md shadow text-center p-6 mb-4">
       <img src={profileImgPath} className="size-20 rounded-full shadow mx-auto" />
@@ -10,7 +9,7 @@ const UserCard = ({ id, firstname, lastname,profileImgPath }) => {
         <h3 className="hover:text-indigo-600 font-semibold text-lg">
           {firstname} {lastname}
         </h3>
-        <p className="text-sm text-slate-400">Web developer</p>
+        <p className="text-sm text-slate-400">{role ? role : 'candidate'} </p>
       </div>
       <div className="flex justify-between mt-2">
         <div className="block">

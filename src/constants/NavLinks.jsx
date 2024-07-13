@@ -39,7 +39,7 @@ export  const UserLinks = [
     },
     {
       id: 4,
-      name: "Help",
-      link: "/help",
+      name: "Contact Us",
+      link: "/contact",
     },
   ];

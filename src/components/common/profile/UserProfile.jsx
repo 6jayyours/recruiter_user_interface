@@ -31,7 +31,6 @@ const UserProfile = () => {
   const [educations, setEducations] = useState([]);
   const [skills, setSkills] = useState([]);
 
-
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [profileImage, setProfileImage] = useState(null);
@@ -99,6 +98,8 @@ const UserProfile = () => {
     oldPassword: "",
     newPassword: "",
     confirmPassword: "",
+    location: "",
+    pasition: "",
   });
 
   useEffect(() => {
@@ -114,6 +115,8 @@ const UserProfile = () => {
             gender: userData.gender || "",
             mobile: userData.mobile || "",
             role: userData.role || "",
+            location: userData.location || "",
+            position: userData.position || "",
           });
         })
         .catch((error) => {
@@ -213,9 +216,12 @@ const UserProfile = () => {
   };
 
   const handleSubmitPassword = () => {
-    console.log(formData.oldPassword,formData.newPassword,formData.confirmPassword)
+    console.log(
+      formData.oldPassword,
+      formData.newPassword,
+      formData.confirmPassword
+    );
     if (formData.newPassword !== formData.confirmPassword) {
-      
       return;
     }
 
@@ -225,17 +231,17 @@ const UserProfile = () => {
       id,
     };
 
-    if(id) {
+    if (id) {
       dispatch(changePass(passData))
-      .then(response => {
-        console.log("Password updated successfully:", response);
-        // Handle success, e.g., disable editing after successful update
-        setIsPasswordEditable(false);
-      })
-      .catch(error => {
-        console.error("Error updating password:", error);
-        // Handle error, e.g., show error message
-      });
+        .then((response) => {
+          console.log("Password updated successfully:", response);
+          // Handle success, e.g., disable editing after successful update
+          setIsPasswordEditable(false);
+        })
+        .catch((error) => {
+          console.error("Error updating password:", error);
+          // Handle error, e.g., show error message
+        });
     }
   };
 
@@ -275,7 +281,7 @@ const UserProfile = () => {
                 <h5 className="text-xl font-semibold">
                   {formData.firstName} {formData.lastName}
                 </h5>
-                <p className="text-gray-500">{formData.role}</p>
+                <p className="text-gray-500">{formData.position}</p>
               </div>
             </div>
             <div className="p-6 rounded-md shadow bg-white border border-gray-300">
@@ -343,6 +349,34 @@ const UserProfile = () => {
                     <option value="female">Female</option>
                     <option value="other">Other</option>
                   </select>
+                </div>
+                <div>
+                  <label className="font-medium" htmlFor="location">
+                    Location:
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full border border-gray-300 p-2 mt-1 rounded-md outline-none focus:border-blue-500"
+                    id="location"
+                    name="location"
+                    value={formData.location}
+                    onChange={handleChange}
+                    disabled={!isPersonalDetailsEditable}
+                  />
+                </div>
+                <div>
+                  <label className="font-medium" htmlFor="position">
+                    Position:
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full border border-gray-300 p-2 mt-1 rounded-md outline-none focus:border-blue-500"
+                    id="position"
+                    name="position"
+                    value={formData.position}
+                    onChange={handleChange}
+                    disabled={!isPersonalDetailsEditable}
+                  />
                 </div>
                 <div className="col-span-2">
                   {isPersonalDetailsEditable ? (
@@ -515,7 +549,7 @@ const UserProfile = () => {
                     disabled={!isPasswordEditable}
                   />
                 </div>
-                <div >
+                <div>
                   <label className="font-medium" htmlFor="newPassword">
                     New Password :
                   </label>
@@ -530,7 +564,7 @@ const UserProfile = () => {
                     disabled={!isPasswordEditable}
                   />
                 </div>
-                <div >
+                <div>
                   <label className="font-medium" htmlFor="confirmPassword">
                     Re-type New Password :
                   </label>
