@@ -34,6 +34,7 @@ import RecDashboard from "../components/recruiter/sections/RecDashboard.jsx";
 import AppliedJobs from "../components/user/AppliedJobs.jsx";
 import UserDash from "../components/user/UserDash.jsx";
 import MyJobApplications from "../components/recruiter/sections/MyJobApplications.jsx";
+import Meeting from "../components/common/Meeting.jsx";
 
 const router = createBrowserRouter([
   { path: "/login", element: <Login /> },
@@ -246,9 +247,10 @@ const router = createBrowserRouter([
       },
     ],
   },
-  
+  { path: "/room/:roomId", element: <Meeting/> },
   { path: "/noauthorization", element: <NotAuthorized /> },
   { path: "/pagenotfound", element: <NotFound /> },
+
 ]);
 
 export default router;

@@ -8,6 +8,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { FaMessage } from "react-icons/fa6";
 import { getUser } from "../../redux/slice/authSlice";
 import DropDownProfile from "./DropDownProfile";
+import { FaVideo } from "react-icons/fa";
+import MeetingModal from "./MeetingModal";
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -22,6 +24,16 @@ const Navbar = () => {
   const [profileImage, setProfileImage] = useState(null);
   const [userName, setUsername] = useState(null);
   const [openDrop, setOpenDrop] = useState(false);
+
+  const [showVideoModal, setShowVideoModal] = useState(false);
+
+  const openVideoModal = () => {
+    setShowVideoModal(true);
+  };
+
+  const closeVideoModal = () => {
+    setShowVideoModal(false);
+  };
 
   useEffect(() => {
     if (authenticated) {
@@ -44,6 +56,8 @@ const Navbar = () => {
     setShowMenu(!showMenu);
   };
 
+
+
   // Conditionally render the "Get Started" button based on authentication status
   const getStartedButton = !authenticated && (
     <Link to={"/login"}>
@@ -55,10 +69,15 @@ const Navbar = () => {
 
   const userDetailsAndIcon = authenticated && (
     <div className="flex items-center space-x-4">
+       
+        <FaVideo className="cursor-pointer text-3xl mr-4 text-indigo-800" 
+        onClick={openVideoModal}/>
+    
+      
       <Link to={path}>
         <FaMessage className="cursor-pointer text-2xl mr-4 text-indigo-800" />
       </Link>{" "}
-      {/* Replace FaBell with your actual message icon component */}
+
       <span className="font-semibold">{userName}</span>
       <img
         src={profileImage}
@@ -127,6 +146,11 @@ const Navbar = () => {
         {/* mobile view links */}
         <MobileMenu showMenu={showMenu} toggleMenu={toggleMenu} />
       </nav>
+      {showVideoModal && (
+        <MeetingModal
+          closeModal={closeVideoModal} // Pass close function to the modal
+        />
+      )}
     </>
   );
 };
