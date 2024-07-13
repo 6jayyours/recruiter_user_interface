@@ -202,8 +202,7 @@ export const fetchReceiverIdsBySenderId = createAsyncThunk(
       });
       return res.data;
     } catch (error) {
-      console.error('Error fetching receiver IDs by sender ID:', error);
-      throw error;
+      return rejectWithValue(error.message);
     }
   }
 );

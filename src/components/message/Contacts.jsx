@@ -9,24 +9,24 @@ const Contacts = ({ toId }) => {
   const [allReceivers, setAllReceivers] = useState([]);
   
   useEffect(() => {
-    const fetchContacts = async () => {
-      try {
-        const response = await dispatch(fetchReceiverIdsBySenderId(id));
+    dispatch(fetchReceiverIdsBySenderId(id))
+      .then((response) => {
+        console.log(response);
         if (response.payload.length === 0 && toId) {
-          const newUserResponse = await dispatch(getUser(toId));
-          const newUser = newUserResponse.payload;
-          setAllReceivers([newUser]);
+          return dispatch(getUser(toId)).then((newUserResponse) => {
+            const newUser = newUserResponse.payload;
+            setAllReceivers([newUser]);
+          });
         } else {
           const receiverIds = response.payload;
-          const usersResponse = await dispatch(getUsersByIds(receiverIds));
-          setAllReceivers(usersResponse.payload);
+          return dispatch(getUsersByIds(receiverIds)).then((usersResponse) => {
+            setAllReceivers(usersResponse.payload);
+          });
         }
-      } catch (error) {
+      })
+      .catch((error) => {
         console.error('Error fetching receiver data:', error);
-      }
-    };
-
-    fetchContacts();
+      });
   }, [dispatch, id, toId]);
 
   const handleSendMessage = (user) => {

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getUser } from "../../redux/slice/authSlice";
+import moment from 'moment';
 
 const Message = ({ handleSend, messageInput, setMessageInput, history, to }) => {
   const id = useSelector((state) => state.auth.id);
@@ -83,7 +84,7 @@ const Message = ({ handleSend, messageInput, setMessageInput, history, to }) => 
               </div>
               <div className="mt-1 text-gray-700">{message.content}</div>
               <span className="text-xs text-gray-500">
-                {new Date(message.timestamp).toLocaleTimeString()}
+              {moment(message.timestamp).format('HH:mm')}
               </span>
             </div>
             {isSender(message.senderId) && (
